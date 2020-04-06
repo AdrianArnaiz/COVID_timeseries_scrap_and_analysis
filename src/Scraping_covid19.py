@@ -18,7 +18,11 @@ for x in table_body.find_all('tr'):
     data = [y.text for y in x.find_all('td')]
     df_data.append(data)
 
-# Creamos el dataset con pandas con la fecha de hoy
+# Creamos el dataset con pandas con la fecha y hora de hoy
 df_covid19 = pd.DataFrame(df_data, columns=df_head, index=list(range(1, len(df_data)+1)))
-df_covid19.to_csv(r'{}_covid19.csv'.format(dt.date.today()))
-
+#Establecemos como índice el país
+df_covid19 = df_covid19.set_index(['Country,Other'])
+#Añadimos fecha al nombre por si hay mas de 1 ejecución en un día
+now = dt.datetime.now()
+nombre_csv = now.strftime("%Y-%m-%d__%Hh_%Mm_%S")
+df_covid19.to_csv(r'../csv/covid_19_daily/{}_covid19.csv'.format(nombre_csv))
