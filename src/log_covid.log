@@ -1,0 +1,17 @@
+[|2020/04/06 22:08:53| - root - INFO] - 
+
+[|2020/04/06 22:08:53| - root - INFO] - |--------------------|
+[|2020/04/06 22:08:53| - root - INFO] - |INICIO DEL SCRAPPING|
+[|2020/04/06 22:08:53| - root - INFO] - | - Patricia Garcia  |
+[|2020/04/06 22:08:53| - root - INFO] - | - Adrian Arnaiz    |
+[|2020/04/06 22:08:53| - root - INFO] - |--------------------|
+[|2020/04/06 22:08:53| - root - INFO] - Conexi�n completada con �xito - 200
+[|2020/04/06 22:08:53| - root - INFO] - Datos extraidos satisfactoriamente de la pagina
+[|2020/04/06 22:08:53| - root - INFO] - Guardado csv daily 2020-04-06__22h_08m_55
+[|2020/04/06 22:08:53| - root - INFO] - ACTUALIZADO csv:../csv/covid_19_series/TotalCases_covid19_timeserie.csv
+[|2020/04/06 22:08:53| - root - INFO] - ACTUALIZADO csv:../csv/covid_19_series/TotalDeaths_covid19_timeserie.csv
+[|2020/04/06 22:08:53| - root - INFO] - ACTUALIZADO csv:../csv/covid_19_series/TotalRecovered_covid19_timeserie.csv
+[|2020/04/06 22:08:53| - root - INFO] - ACTUALIZADO csv:../csv/covid_19_series/ActiveCases_covid19_timeserie.csv
+[|2020/04/06 22:08:53| - root - INFO] - ACTUALIZADO csv:../csv/covid_19_series/TotalTests_covid19_timeserie.csv
+[|2020/04/06 22:08:53| - root - INFO] - FIN
+
