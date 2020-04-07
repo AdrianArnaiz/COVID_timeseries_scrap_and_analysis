@@ -14,7 +14,7 @@ path_series = r'../csv/covid_19_series/'
 #Insertamos mensajes de log, porque el objetivo es automatizar la ejecución y así sabemos que hha pasado en cada una.
 # Nos referimos a automatizar el lanzamiento automático del script.
 
-logging.basicConfig(filename='log_covid.log', format='[|{}| - %(name)s - %(levelname)s] - %(message)s'.format(dt.datetime.now().strftime("%Y/%m/%d %H:%M:%S")), level=logging.INFO)
+logging.basicConfig(filename='log_covid.log', format='[|%(asctime)s| - %(name)s - %(levelname)s] - %(message)s', level=logging.INFO)
 logging.info('\n')
 logging.info('|--------------------|')
 logging.info('|INICIO DEL SCRAPPING|')
@@ -34,15 +34,15 @@ while rt<=2:
             connected=True
             break
         rt+=1
-        logging.warning('Fallo en la página: '+str(page.status_code)+' - Reintento: '+str(rt))
+        logging.warning('Fallo en la pagina: '+str(page.status_code)+' - Reintento: '+str(rt))
         time.sleep(3)
     except Exception as ex:
-        logging.warning('Fallo en la conexión: '+ str(ex)+' - Reintento: '+str(rt))
+        logging.warning('Fallo en la conexion: '+ str(ex)+' - Reintento: '+str(rt))
         rt+=1
         time.sleep(3)
 
 if connected:
-    logging.info('Conexión completada con éxito - 200')
+    logging.info('Conexion completada con exito - 200')
 
     try:
         soup = BeautifulSoup(page.content, features="html.parser")
