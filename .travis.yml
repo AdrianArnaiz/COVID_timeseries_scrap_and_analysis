@@ -1,17 +1,25 @@
+dist: bionic
 language: python
 python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
   - "3.6"      # current default Python on Travis CI
-  - "3.7"
-  - "3.8"
-  - "3.8-dev"  # 3.8 development branch
-  - "nightly"  # nightly build
+  
 # command to install dependencies
 install:
-  - cd src
-  - pip install -r requirements.txt
+  - pip install -r src/requirements.txt
 
 script:
-  - Scraping_covid19.py
+  - cd src
+  - python Scraping_covid19.py
+  - cd ..
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: true
+  target_branch: master
+  on:
+    branch: master
+
+notifications:
+  email: false
