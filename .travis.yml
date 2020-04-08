@@ -18,6 +18,7 @@ deploy:
   github_token: $GITHUB_TOKEN
   keep_history: true
   target_branch: master
+  commit_message: "AutoActualización de datos by TravisBot [ci skip]"
   on:
     branch: master
 
