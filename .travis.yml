@@ -14,13 +14,13 @@ script:
 
 deploy:
   provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
-  keep_history: true
+  edge: true
+  github-token: $GITHUB_TOKEN
   target_branch: master
-  commit_message: "AutoActualización de datos by TravisBot [ci skip]"
   on:
     branch: master
+  verbose: true
+  commit_message: "[ci skip] Actualizacion Automatizada by TravisBOT"
 
 notifications:
   email: false
