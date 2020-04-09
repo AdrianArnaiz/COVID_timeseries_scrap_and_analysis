@@ -51,7 +51,7 @@ if connected:
         table_body = table.find("tbody")
 
         # Extraemos el header
-        df_head = [x.text for x in table_head.find_all('th')[:-1]
+        df_head = [x.text for x in table_head.find_all('th')[:-1]]
 
         # Ahora creamos una lista de listas con todos los datos
         # De cada uno de los países
