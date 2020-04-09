@@ -51,13 +51,13 @@ if connected:
         table_body = table.find("tbody")
 
         # Extraemos el header
-        df_head = [x.text for x in table_head.find_all('th')]
+        df_head = [x.text for x in table_head.find_all('th')[:-1]
 
         # Ahora creamos una lista de listas con todos los datos
         # De cada uno de los países
         df_data = []
-        for x in table_body.find_all('tr'):
-            data = [y.text for y in x.find_all('td')]
+        for x in table_body.find_all('tr')[8:]:
+            data = [y.text for y in x.find_all('td')[:-1]]
             df_data.append(data)
 
     except Exception as ex:
