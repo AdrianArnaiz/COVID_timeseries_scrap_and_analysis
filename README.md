@@ -1,4 +1,4 @@
-# Practica 1: Web Scrapping  
+# Practica 1: Web Scrapping  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3748050.svg)](https://doi.org/10.5281/zenodo.3748050)
 
 **Resultado del ultimo Scraping automático**: [![Build Status](https://travis-ci.org/AdrianArnaiz/scrap_uoc.svg?branch=master)](https://travis-ci.org/AdrianArnaiz/scrap_uoc)
 

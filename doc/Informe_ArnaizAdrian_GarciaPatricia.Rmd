@@ -10,7 +10,7 @@ output:
   pdf_document:
     toc: yes
     number_sections: yes
-    toc_depth: 2
+    toc_depth: 3
     citation_package: natbib
 bibliography: references.bib
 
@@ -18,7 +18,21 @@ bibliography: references.bib
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 ```
+\hfill
+
+^[Bibliogrfía al final del documento]
+
+\newpage
+
+# Enlances de interés
+
+**Repositorio de Github**: https://github.com/AdrianArnaiz/scrap_uoc 
+
+**DOI de Zenodo**: 10.5281/zenodo.3748050.
+
+**Link a Zenodo**: https://zenodo.org/record/3748050#.XpD5w8gzZ9A 
 
 \newpage
 # Contexto
@@ -45,46 +59,114 @@ Hemos analizado muchas posibles fuentes de datos:
 # Título del dataset
 **Evolución de contagio del COVID-19 por países**.
 
-# Descripción del dataset
+# Descripción breve del dataset
 El dataset tendrá la evolución temporal de 5 datos relativos al covid por países. Guardaremos los datos relativos a **contagiados, casos activos, recuperados, muertes y tests realizados**. Es decir para cada uno de los países en los que haya casos registrados, guardaremos un dato al día (de manera automática) cada uno de los datos recién enumerados. Al final, reflejamos la serie temporal de cada uno de esos datos por países.
 
 Como podemos ver es un dataset de 3 dimensiones (Tipo de Dato, País y fecha). En la sección \ref{sec:cont}, explicaremos cómo lo hemos resuelto.
 
 # Representación gráfica
+El potencial actual de visualización que están sacando las asociaciones son gráficas de líneas para ver la evolución de los datos y gráficas de datos sobre el mapa para explicar evolución del contagio, mortalidad, etc. Entendemos que este apartado se refiere a representar el dataset de manera visual o esquemática, no a visualizaciones que se pueden obtener a partir del mismo. 
+
+Como hemos comentado tiene 3 dimensiones:
+
+* País: Paises con al menos un caso (así añade *worldometers países a su tabla*)
+* Tiempo: Desde el 30/03 que empezamos a scrapear al menos 1 vez al día (la automática), hasta el día actual, ya que el scrap se lanza automaticamente con Travis todos los dias a las 10:00 GMT+0
+* Tipo de Dato: datos que queremos registrar: contagiados, casos activos, recuperados, muertes y tests realizados.
+Por tanto, lo representaremos gráficamente tal y como se ve en la Figura \ref{cubo}.
+
+![Representación gráfica \label{cubo}](./img/grafico_cubo.png){width=500px}
 
 
 # Contenido 
 
 ## Dataset \label{sec:cont}
-Campos y periodo de tiempo
+Nuestros datos tienen los campos que hemos contado anteriormente, sin embargo, tenemos que explicar la solución que hemos tomado para plasmarlo en formato csv. Hay dos alternativas (ver Figura \ref{alternativas_csv}):
+
+![Representación gráfica \label{alternativas_csv}](./img/alternativas.png)
+
+* Un único csv con las siguientes columnas: *País*, *Fecha*, *Contagiados*, *activos*, *recuperados*, *muertes*, *tests*. Así tendríamos una entrada en la tabla por cada par País-Fecha. Tendría $num\_filas = Pais\times Fecha$.
+* **Varios csv**: Consiste en que una dimensión se utilice para dividir los datos en distintos csv. Es decir, un csv por cada *slice* del cubo. **Hemos utilizado esta alternativa** porque facilita la comprensión a la hora de ver los datos. Además, normalmente trabajaremos con un dato en concreto (p.e. analizar contagiados), por lo que si tenemos todo en un único csv, la mayoría de análisis empezarían con simular este slice que hemos explicado. Por lo tanto tenemos **5 csv**: la variación temporal de cada tipo de dato por país.
+
+La estructura individual de cada uno de estos csv es la misma. Se encontrarán en el directorio `csv/covid_19_series` y cada archivo tendrá el nombre `{TipoDato}_covid19_timeserie.csv`, siendo `TipoDato` cada dato que hemos nombrado: *TotalCases*, *TotalDeaths*, *TotalRecovered*, *ActiveCases*, *TotalTests*. Cada csv tendrá como filas los países y como columna la fecha de cuando hemos realizado un scrapping (idealmente una al día, pero durante la fase de desarrollo hay días que hemos hecho más $\rightarrow$ se refinará en posteriores prácticas en la fase de limpieza de datos).
 
 ## Cómo se ha recogido
-Contar el retardo, porque no se han tenido más estrategias contra el bloqueo.
+Hemos hecho scrapping sobre la página de [Worldometers-Coronavirus](https://www.worldometers.info/coronavirus), en el script alojado en el directorio `src\Scraping_covid19.py`. En el tenemos **una tabla** que muestra los **valores de los datos (contagiados, activos, etc) por país en el momento actual**. Es decir, las **filas los países y las columnas los datos del momento actual**. El sitio web **no dispone ni de robots.txt ni de sitemap.xml**. En cuanto a las características del scraping (pocas llamadas a una sola página), que no haya *robots.txt* ni *sitemap.xml* tampoco nos plantea un gran contratiempo.
+
+Hemos hecho scraping sobre ese link, utilizando *BeautifulSoup* para encontrar la tabla y poder navegar sobre filas y columnas para recuperar los elementos. Hemos debido hacer la búsqueda en la tabla para quedarnos con los datos necesarios (p.e. a la hora de hacer el scrapping de la tabla, devuelve 8 filas el principio que no siguen el formato de la tabla, se deben corresponder con los resumenes por contienente, esas filas las hemos saltado en el scraping). 
+
+Tras recuperar los datos de la tabla actual, está la **fase de actualización de datos** (o creación si es la primera vez que se lanza el script). Actualizamos las tablas con los datos nuevos, se añaden países si hay nuevos países en la tabla, y si hay países que antes estaban y ahora no queda su casilla a `Nan`. Todo ello con Pandas.
+
+Puede surgir una pregunta: *¿Cómo se han obtenido datos de otras fechas?*. Nuestro enfoque ha sido **automatizar el lanzamiento del scraping** para que se ejecute una vez al día y se vayan **actualizando automáticamente los csv de las series temporales de los datos por país**. Por ello, la primera fecha de la que tenemos datos es del 30/03, que fue el primer día que teníamos desarrollado el scraping y lo lanzamos. La herramienta **Travis** ha sido utilizada para automatizar el lanzamiento del script y el *autodeploy* a *Github* (*Travis* permite que, en su plataforma, una vez al día y de forma planificada y automática se ejecute el scrapping, se actualizan las tablas de datos y se haga un commit automático para actualizar los datos en el github). Explicaremos como lo hemos hecho con travis en la sección \ref{sec:travis}.
+
+Al código del scraping se le ha añadido una **salida tipo *logfile*** donde se reflejan los resultados de la ejecución de cada scraping. En nuestro caso es muy útil, ya que como se hace de manera automática nos deja ver cómo ha sido, la hora, si todo ha ido bien... Esto se ve reflejado en el fichero `src\log_covid.log`. 
+
+En cuanto a estrategias anti-bloqueo cabe destacar que hemos implementado pocas por la naturaleza de nuestro scraping. Tal y como hemos explicado: solo hacemos **una petición al día** para recuperar la tabla de datos actuales y trabajamos con esa página ya descargada. En el paso del *request* a la página web sí que hemos **implementado reintentos con espera** (espaciando entre peticiones http), teniendo en cuenta tanto fallos de conexión (y nos dará excepción que capturamos y reintentamos), como fallos de mensajes (reintentamos si conectamos bien con la página pero nos devuelve un código diferente al 200). No vemos sentido a otras medidas como cambiar el *user-agent*, ya que con una petición al día no nos creará dificultades.
+
+### Travis \label{sec:travis}
+Comentaremos un poco en detalle cómo hemos automatizado la ejecución del scraping para auto-actualizar los csv una vez al día mediante un bot, ya que creemos que es una parte con mucho potencial de éste scraping. 
+
+**Travis** es una herramienta de automatización de pruebas. Como muchos *frameworks* de automatización de pruebas, pueden utilizarse también para labores de *RPA* (automatizar procesos). *Travis* se conecta con Github, para ejecutar tests de pruebas que tengas codificados en el script que le indiques (debe estar en el repositorio). Se ejecuta automáticamente cada vez que haces un push o de manera planificada (diaria o mensualmente). Hemos utilizado esto para indicarle a ***Travis* que ejecute nuestro script de scraping una vez al día (no cada push) y haga un *deploy* de los resultados a *Github***. 
+
+Para realizar ésto, solo necesitamos conectar nuestro repositorio con *Travis* y añadir la configuración en el archivo `.travis.yml` en la carpeta raíz de nuestro repositorio.
+
+En el `Readme.md` de la raíz del proyecto, hay una marca que indica cómo ha ido el último scrapping (*passing* o *faillure*), ver Figura \ref{res}. Si se clica sobre ella, se ven los resultados del ultimo scraping en la plataforma de *Travis* (aunque no se tenga usuario se puede ver los resultados).
+
+![Marca resultado scraping automatico Travis \label{res}](./img/tr_resultado.png){width=400px}
+
+Los pasos para su configuración son:
+
+* Configurar el archivo `.travis.yml`.
+* Registrarte en *Travis* y **activar** la conexión con tu repositorio. A partir de ahí, *Travis* ya sabe automáticamente que tiene que ejecutar por la configuración del anterior paso. Ver Figura \ref{tr1}.
+* Crear un **token de conexión segura** para que se pueda realizar el deploy automáticamente (el push desde el bot de *Travis* para la actualización del *Github*). Ver Figura \ref{tr2}.
+* Configurar lanzamiento automático una vez al día: Cron. Ver Figura \ref{tr4}.
+
+![Activar conexión Travis-repositorio \label{tr1}](./img/tr1.png){width=400px}
+
+![Conexión con token seguro \label{tr2}](./img/tr2.png){width=400px}
+
+![Conexión con token seguro \label{tr4}](./img/tr4.png){width=400px}
+
+Ahora, todos los días a las 12:11 hora de España, el bot de Travis nos hará un commit actualizando los datos. El resultado de la ejecución en su máquina se ve clicando la marca en el `readme.md` anteriormente descrita.
 
 # Agradecimientos
+* Principalmente, agradecer a la asociación *Worldometers* [@worldo], asociación de estadísticas mundiales en tiempo real, por tener los datos actualizados de manera tan rápida y en abierto. 
+* Después, tanto a los estudios de la *Johns Hopkins University* [@jhu], como a la asociación *Our world in Data* de la *Oxford University* [@roser2020coronavirus], por sus trabajos que nos han permitido descubrir fuentes da calidad.
+* Agradecer los recursos encontrados para realizar el scraping, tanto en [@lawson2015web] como en el módulo [@webscrapuoc], propio de la UOC.
+
 
 
 # Inspiración
+Esta pregunta ha sido respondida en anteriores apartados. Pero resumiendo, pretendemos analizar el cómo se ha desarrolado en el pasado la enfermedad, **explicar en qué etapa estamos en el presente y poder predecir los valores futuros para una mejor prevención**. A parte, en el futuro podrán analizarse otros datos externos para ver su correlación o su influencia en la propagación o viceversa (valores bursatiles, etv).
 
+La inspiración ha sido el clima actual de la pandemia y repitiendo lo dicho en el primer apartado, buscar homogeneidad y rigurosidad en los datos para elaborar correctamente las anteriores tareas.
 
 
 # Licencia
+Hemos elegido la licencia  **CC BY-SA 4.0 License** por los siguiente motivos:
 
-La licencia escogida para la publicación de este conjunto de datos ha sido **CC BY-SA 4.0 License**. Los motivos que han llevado a la elección de esta licencia tienen que ver con la idoneidad de las cláusulas que esta presenta en relación con el trabajo realizado:
+* *Deberán seguir con esta licencia las contribuciones a éste trabajo*: se asegura que se seguirá utilizando como mínimo una licencia tan restrictiva como esta.
 
-* *Se debe proveer el nombre del creador del conjunto de datos generado, indicando los cambios que se han realizado*. De esta manera, se reconoce el trabajo ajeno y en qué medida se han realizado aportaciones en relación con el trabajo original.
+* *Cuando se hagan cambios sobre el trabajo, habrá que indicar dichos cambios y al autor original*: se sigue reconociendo la autoría y qué cosas ha aportado cada uno.
 
-* *Se permite un uso comercial*. Esto haría que incrementen las probabilidades de que una empresa utilice los datos generados y realicen trabajos de calidad que reporten cierto reconocimiento al autor original.
-
-* *Las contribuciones realizadas a posteriori sobre el trabajo publicado bajo esta licencia deberán distribuirse bajo la misma*. Esto hace que el trabajo del autor original continúe distribuyéndose bajo los términos que él mismo planteó.
-
-# Código fuente y dataset
-
-El código fuente del scraping, actualización de datos y autoimatización mediante *Travis* se encuentra en [este enlace](https://github.com/AdrianArnaiz/scrap_uoc). Además hay archivos readme en los directorios que dan más información del proyecto.
+* *Se permite comercializar*, con lo que podremos conseguir llegar a más cantidad de personas si alguien utiliza nuestro dataset con este fin.
 
 
+# Código fuente y dataset en Zenodo
+
+* El código fuente del scraping, actualización de datos y autoimatización mediante *Travis* se encuentra en [este enlace](https://github.com/AdrianArnaiz/scrap_uoc). Además hay archivos `readmemd` en los directorios que dan más información del proyecto.
+
+* El dataset (conjunto de 5 csv) se sube a *Zenodo*, sin embargo, cabe **destacar que debido al potencial añadido de la autoactualización con *Travis*, este dataset está en continua actualización diaria de los datos**. El dataset con mayor actualización se coresponderá al que tenemos en el repositorio.
+  * **DOI de Zenodo**: 10.5281/zenodo.3748050.
+  * **Link a Zenodo**: https://zenodo.org/record/3748050#.XpD5w8gzZ9A
+  
 \newpage
 
-# Bibliografía
-<span style="color:red">**AÑADIR RECURSOS DE LIBROS USADOS PARA LAS BUENAS PRACTICAS DEL SCRAPPING (LAWSON, POPRIO DE UOC). AÑADIR REFERENCIAS A LOS TRABAJOS DE LA JHU, DE OUR WORLD IN DATA DE WORLDOMETERS...*</span>
+# Tabla de contribuciones
+| Contribuciones       | Firma        |
+|----------------------|--------------|
+| Investigación previa | P.G.S, A.A.R |
+| Redacción respuestas | P.G.S, A.A.R |
+| Desarrollo de código | P.G.S, A.A.R |
+
+\newpage
 
