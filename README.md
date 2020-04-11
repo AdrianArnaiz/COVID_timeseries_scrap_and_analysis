@@ -10,37 +10,30 @@ Caso práctico de la recopilación de datos mediante técnicas de scrapping.
 * [**Adrián Arnaiz Rodríguez**](mailto:aarnaizr@uoc.edu) 
 
 ## Descripción del proyecto
-![#f03c15](https://placehold.it/15/f03c15/000000?text=+) `TO DO` [ejemplo] El problema que se aborda mediante este proyecto es: [ejemplo] conseguir los datos de la pagina web www.www.com con el objetivo de conseguir los datos relativos a xxx, bla bla
+![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Actualmente nos encontramos ante un suceso histórico, una pandemia a nivel mundial. En dicho contexto, conocer la evolución a lo largo del tiempo de la situación del virus **COVID-19** por países es imprescindible para poder actuar en consecuencia. Si se disponen de buenos datos y un buen modelo, se puede incluso predecir datos futuros para poder prevenir o gestionar de manera más efectica tanto recursos como medidas a tomar. Para ello se ha hecho un estudio riguroso de las diferentes fuentes de datos existentes en la red y nos hemos decantado por worldmeters porque cumple con todas las funcionalidades que buscabamos: variedad en los datos, centralizados, rigurosos y actualizados dinámicamente. Por ello, se ha considerado esta página como un repositorio central de los datos del COVID de la cual se obtiene un dataset principal que se actualizara todos los días a la misma hora gracias al sistema de integración continua Travis-CI.
 
 ## Estructura del proyecto
-![#f03c15](https://placehold.it/15/f03c15/000000?text=+) `TO DO` Futura descripción de la estructura del proyecto
-* **src/**: carpeta contenedora del código relativo al scrapping.
- > * ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) `TO DO` Explicaremos aquí los **ficheros de código**.
-* **doc/**: Contiene únicamente la documentación pdf de la respuesta a las preguntas y la tabla de contribuciones.
-* **csv/**: Contiene únicamente el fichero csv del dataset resultante del scrapping.
+![#f03c15](https://placehold.it/15/f03c15/000000?text=+) En la carpeta principal nos encontramos con el archivo ".travis.yml" el cual contiene la configuración requerida por Travis-CI. Además, estructuramos el resto de ficheros en los siguientes tres directorios:  
+
+* **src/**: Contiene el fichero con el código principal, el .log generado y los requerimientos para Travis CI:
+    * Scraping_covid19.py: contiene el código para el scraping y la generación de los csv y el archivo .log
+    * log_covid.log: generado por Scraping_covid19.py, recoge información de todos los commits cada vez que se ejecuta
+    * requirements.txt: archivo con los requerimientos necesarios para que Travis CI ejecute correctamente el archivo .py  
+    
+* **doc/**: Contiene la documentación con la respuesta a las preguntas propuestas para la práctica y la tabla de contribuciones en formato RMarkDown y PDF, así como los ficheros necesarios para generar dicho informe.  
+
+* **csv/**: Contiene los ficheros csv generados del scrapping. Estos se dividen en dos subdirectorios:
+    * **covid_19_daily/**: ficheros csv con las actualizaciones automáticas de la situación del COVID19 por día obtenidas directamente de worldometers.
+    * **covid_19_series/**: ficheros csv generados y actualizados a partir de Scraping_covid19.py
 
 *************
 ## Bibliografía 
-![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Listado de paginas web usadas como fuente de datos:  
-Generales:  
-* [World Health Organization](https://www.who.int/)
-* [European Centre for Disease Prevention and Control (ECDC)](https://www.ecdc.europa.eu/en/geographical-distribution-2019-ncov-cases)
-* https://www.worldometers.info/coronavirus/
-* [BNO News](https://bnonews.com/index.php/2020/02/the-latest-coronavirus-cases/)  
+Ensheng Dong, Hongru Du, and Lauren Gardner. An interactive web-based dashboard to track covid-19 in real time. *The Lancet infectious diseases*, 2020.  
 
-Nacionales:  
-* [Ministerio de sanidad, consumo y bienestar social de España](https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/situacionActual.htm) (Actualizado 21:00)
-* [DXY.cn. Pneumonia. 2020](http://3g.dxy.cn/newh5/view/pneumonia)
-* [National Health Commission of the People’s Republic of China (NHC)](http://www.nhc.gov.cn/xcs/yqtb/list_gzbd.shtml)
-* [China CDC](http://weekly.chinacdc.cn/news/TrackingtheEpidemic.htm)
-* [Hong Kong Department of Health](https://www.chp.gov.hk/en/features/102465.html)
-* [Robert Coch Institute (RKI)](https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Fallzahlen.html)
-* [Macau Government](https://www.ssm.gov.mo/portal/)
-* [Taiwan CDC](https://sites.google.com/cdc.gov.tw/2019ncov/taiwan?authuser=0)
-* [US CDC](https://www.cdc.gov/coronavirus/2019-ncov/index.html)
-* [Government of Canada](https://www.canada.ca/en/public-health/services/diseases/coronavirus.html)
-* [Australia Government Department of Health](https://www.health.gov.au/news/coronavirus-update-at-a-glance)
-* [Ministry of Health Singapore (MOH)](https://www.moh.gov.sg/covid-19)
-* [Italy Ministry of Health](http://www.salute.gov.it/nuovocoronavirus)
+Reichard Lawson, *Web scraping with Python*. Packt Publishing Ltd, 2015.  
 
-![#f03c15](https://placehold.it/15/f03c15/000000?text=+) `TO DO` Listaremos los recursos utilizados, libros, documentos, paginas web, artículos anteriores que hayan realizado scrap sobre lo mismo o parecido, articulos del estado del arte...
+Max Roser, Hannah Ritchie, and Esteban Ortiz-Ospina. Coronavirus disease (covid-19)-statistics and research. *Our world in Data*, 2020.  
+
+Laia Subirats Mate and Mireia Calvo Gonzalez. Web Scraping. Technical report, UOC, Barcelona, (sf). PID00266970.  
+
+Worldometers. Covid-19 coronavirus pandemic. https://www.worldometers.info/coronavirus/ , 2020.  
