@@ -1,5 +1,8 @@
+**Resultado del ultimo Scraping automático**: [![Build Status](https://travis-ci.org/AdrianArnaiz/scrap_uoc.svg?branch=master)](https://travis-ci.org/AdrianArnaiz/scrap_uoc)
+
 # Código del scrapping
-![#f03c15](https://placehold.it/15/f03c15/000000?text=+) `TO DO` Scrapping de la/s página/s *nombrar páginas*.
+
+Scraping realizado sobre [worldometer - coronavirus](https://www.worldometers.info/coronavirus/). El objetivo es scrapear diariamente la tabla de datos para tratarla y conseguir actualizar las series temporales de los diferentes datos por país.
 
 ## Autores:
 * [**Patricia García Suarez**](mailto:pgarcia054@uoc.edu)
@@ -7,7 +10,20 @@
 
 
 ## Ficheros
-![#f03c15](https://placehold.it/15/f03c15/000000?text=+) `TO DO` Explicaremos aquí los **ficheros de código**, requirements.txt.
+
+* `Scraping_covid19.py`: ejecución del scraping. Hace el scraping de la página para obetener los datos, el tratamiento necesario de la tabla para actualizar los correspondientes csv finales, reintentos, tratatamiento de excepciones y salida verbose a un log.
+* `log_covid.log`: log de la ejecución de los scraping. Tiene un valor añadido, ya que como se actualiza mediante un bot de Travis, podemos ver el resultado, horas, posibles problemas...
+* `requirementes.txt`: fichero de requerimientos para su ejecución en python.
+
 
 ## Instalación y ejecución
-![#f03c15](https://placehold.it/15/f03c15/000000?text=+) `TO DO` Como instalar y ejecutar el entorno del scrapping. Install requirements, hacer un entorno, ejecutar con qué argumentos...
+
+### Instalación
+
+1. Clonar el repositorio
+2. Crear entorno virtual de python. **Python 3.6**.
+3. Instalar requirements (preferiblemente pip). `pip install -r requirements.txt`
+
+### Ejecución
+
+Ejecutar **desde este directorio** (*/src*) el script `Scraping_covid19.py`. Se actualizará el log con el resultado y los csv en su carpeta correspondiente.
