@@ -70,7 +70,7 @@ if connected:
     #Establecemos como índice el país
     df_covid19 = df_covid19.set_index(['Country,Other'])
     #Convertimos las columnas a número: para ello reemplazar la ',' que marca los miles
-    df_covid19.replace([',',' '],'', regex=True, inplace=True)
+    df_covid19.replace([',',' ','NA','N/A'],'', regex=True, inplace=True)
     df_covid19 = df_covid19.apply(pd.to_numeric)
 
     #Guardamos el csv diario: Añadimos fecha al nombre del csv por si hay mas de 1 ejecución en un día
