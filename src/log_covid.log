@@ -782,3 +782,20 @@
 [|2020-05-19 10:33:05,187| - root - INFO] - ACTUALIZADO csv:../csv/covid_19_series/TotalTests_covid19_timeserie.csv
 [|2020-05-19 10:33:05,187| - root - INFO] - FIN
 
+[|2020-05-20 10:33:10,170| - root - INFO] - 
+
+[|2020-05-20 10:33:10,170| - root - INFO] - |--------------------|
+[|2020-05-20 10:33:10,170| - root - INFO] - |INICIO DEL SCRAPPING|
+[|2020-05-20 10:33:10,170| - root - INFO] - | - Patricia Garcia  |
+[|2020-05-20 10:33:10,170| - root - INFO] - | - Adrian Arnaiz    |
+[|2020-05-20 10:33:10,170| - root - INFO] - |--------------------|
+[|2020-05-20 10:33:10,340| - root - INFO] - Conexion completada con exito - 200
+[|2020-05-20 10:33:11,179| - root - INFO] - Datos extraidos satisfactoriamente de la pagina
+[|2020-05-20 10:33:11,215| - root - INFO] - Guardado csv daily: 2020-05-20__10h_33m_11
+[|2020-05-20 10:33:11,233| - root - INFO] - ACTUALIZADO csv:../csv/covid_19_series/TotalCases_covid19_timeserie.csv
+[|2020-05-20 10:33:11,249| - root - INFO] - ACTUALIZADO csv:../csv/covid_19_series/TotalDeaths_covid19_timeserie.csv
+[|2020-05-20 10:33:11,265| - root - INFO] - ACTUALIZADO csv:../csv/covid_19_series/TotalRecovered_covid19_timeserie.csv
+[|2020-05-20 10:33:11,282| - root - INFO] - ACTUALIZADO csv:../csv/covid_19_series/ActiveCases_covid19_timeserie.csv
+[|2020-05-20 10:33:11,299| - root - INFO] - ACTUALIZADO csv:../csv/covid_19_series/TotalTests_covid19_timeserie.csv
+[|2020-05-20 10:33:11,300| - root - INFO] - FIN
+
