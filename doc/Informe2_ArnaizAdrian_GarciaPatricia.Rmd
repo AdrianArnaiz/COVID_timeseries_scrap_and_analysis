@@ -1,0 +1,696 @@
+---
+title: "**Práctica 2: Analítica de datos sobre Covid-19**"
+author:
+  - Patricia García Suarez^[Perfil Github:, https://github.com/Kadatashi]
+  - Adrián Arnaiz-Rodríguez^[Perfil Github:, https://github.com/AdrianArnaiz/]
+date: "9/6/2020"
+header-includes:
+  - \usepackage[spanish]{babel}
+output: 
+  pdf_document: 
+    citation_package: natbib
+    latex_engine: xelatex
+    number_sections: yes
+    toc: yes
+bibliography: references.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+\hfill
+
+^[Bibliogrfía al final del documento]
+
+\newpage
+
+
+
+# Enlances de interés
+
+**Repositorio de Github**: https://github.com/AdrianArnaiz/scrap_uoc 
+
+**DOI de Zenodo (Base de datos)**: 
+
+ * Versión 1.0 (datos del 30 de Marzo al 10 de Abril): 10.5281/zenodo.3748050.
+ * Versión 1.1 (datos del 30 de Marzo al 4 de Mayo): 10.5281/zenodo.3784400.
+ * \textcolor{red}{Version final} 
+
+**Link a Zenodo**: https://zenodo.org/record/3748050#.XpD5w8gzZ9A
+
+# Importación de librerías
+
+```{r loadlib, echo=T, results='hide', message=F, warning=F}
+
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+```
+
+\newpage
+
+# To do's
+\textcolor{red}{To Do's} 
+
+* Seguir pasos marcados en el enunciado
+* Explicar bien que vamos a hacer y porque (todo el rollo de las Series temporales, autocorrelaciones)
+* Crear el dataset, o los diferentes datasets según los análisis.
+  * Sacar población, densidad (o extendion), [continente](https://www.bcn.cat/estadistica/castella/dades/inf/pobest/pobest16/part1/nt112.htm) y Marsh political risk index.
+    * Mirar en eurostat. INSEE, Institut national de la statistique et des études économiques. Espérance de vie, 2013. 
+    * Otra fuente [aqui](https://www.antares-consulting.com/uploads/TPublicaciones/c4fd32193a4984233b4c860cfbbd7c31f6eb1ce2.pdf)
+* Explicar bien el dataset
+* Limpiar dataset (nulos, no creo que tenga sentido normalizar. De todas maneras podemos explicar que depende del análisis se normalizará o no. Así hacemos al principiosólo eliminación de nulos y en cada analisis decidimos si se normaliza o no)
+  * Comprobar normalidad y homogeneidad de varianza: también cuando toque.
+  
+  
+* Realizar cada analisis:
+  * Contrastes hipótesis:
+    * Contraste proporciones Esp-Ita, Esp-Port, Esp-ALe
+    * Contraste anova entre continentes
+  * Correlaciones:
+    * Correlación entre proporcion de tests y proporcion de contagiados.
+    * Correlacion entre variación de indice y numero de casos-O-fallecidos.
+  * Regresión:
+    * Time Series Forecasting: ARIMA
+    * Proporción a x días ~ densidad + %gente mayor + etc
+
+
+# Introducción
+
+## Contexto
+En el contexto de obtenciónd el dataset explicado en la anterior práctica, nos gustaría realizar un análisis de varios aspectos de la pandemia por **Covid-19**. En este contexto es importante analizar con rigor diferentes aspectos de la pandemia, para dar lugar a consluiones basaddas en esos análisis. 
+
+## Análisis de datos sobre el COVID \label{sec:analisis}
+\textcolor{red}{To Do} 
+Primero de todo, nos gustaría explicar la **complicación de las series temporales a la hora de realizar diferentes contrastes de hipótesis, correlaciones o predicciones**. 
+
+### Contrastes de hipótesis
+
+Nos gustaría realizar contrastes de hipótesis sobre la diferencia de afectación entre países o continentes. 
+
+  * La primera complicación esque las *series temporales son muestras con gran autocorrelación en sus datos*, en la que cada observación es muy dependiente de las observaciones temporales anteriores, tienen un orden. Esto rompe el principio de independencia entre observaciones necesario para realizar la mayoría de los análisis estadísticos. Otro problema son los datos a comparar. Es decir, normalmente tenemos una muestra de datos asumiendo en primer lugar independencia (y después normalidad, además de que si lo comparamos con otra muestra también suponemos igualdad de varianzas), por ejemplo, una muestra de pesos y alturas de bebés. No podemos tratar nuestra serie temporal como una muestra de pesos, ya que en nuestra serie temporal las observaciones a lo largo del tiempo no son independientes. Por ello, no podemos realizar un típico contraste de hipótesis, tenemos que buscar otro enfoque.
+
+  * Por otro lado, **para hacer un contraste de hipótesis se comparan distribuciones**. Si comparamos un dato de un dia concreto en el tiempo para dos países, son dos puntos individuales, que no tendrán varianza. Esto **lo resolvemos realizando contrastes de hipótesis sobre la proporción** \textcolor{red}{Citar modulo estadistica}. Consideramos el contagio o no como una variable que proviene de una distribución de Bernouilli con posibilidad de contagio $p$ y posibilidad de no contagiarse de $1-p$. Por ello compararemos las proporciones de contagio de dos países.
+
+  * Cuando tomamos el dato de proporción de contagiados en un país, (i.e., si queremos hacer el contraste que acabamos de explicar para analizar si la proporción de contagiados en España e Italia se puede considerar igual o es diferente), no podemos considerar la serie temporal como la muestra y hacer la media, por que no tendría sentido (no tiene sentido relaizar la media de una serie temporal para ver la proporción de afectados). **Deberemos elegir un punto en el tiempo** para ver la proporción de contagios ese día. Es **muy importante que para hacer un análisis justo, no debemos elegir el mismo día para los dos países**. Deberemos elegir un dñia para cada país de tal modo que esa proporción muestre la misma estapa dentro de la pandemia, es decir, **debemos tener en cuenta cuando llegó el COVID a cada país**. Por ello utilizaremos la estrategia que utilizan diferentes analisa, como por ejempo el New York Times, se elegira el \textcolor{red}{Día 30 después de contabilizar 100 muertes}. 
+  
+  * Para ver la afectación por continentes, consideraremos diferentes muestras de los diferentes continentes. Cada continente tendra $n$ proporciones, 1 de cada país que lo componga. Recordamos que la proporción de cada país ha sido obtenida como la proporción de contagiados el \textcolor{red}{Día 30 después de contabilizar 100 muertes}. De este modo, **de cada continente tendremos una media de proporciones con una desviación, lo que nos permitirá relizar un análisis ANOVA**.
+  
+### Correlaciones
+
+\textcolor{red}{REPASAR, XQ PEARSON SÍ QUE SE PUEDE} 
+
+https://stats.stackexchange.com/questions/133155/how-to-use-pearson-correlation-correctly-with-time-series
+
+Como hemos comentado, una de las principales características que tienen las series temporales, sobre todo estas series derivadas de fenómenos epidemiológicos, es el alto grado de autocorrelación interna de sus datos que anula la hipótesis de independencia en las observaciones. Cuando nosotros realizamos contrastes de hipótesis o análisis de correlación (Pearson o Spearman), suponemos independencia en los datos, que no se cumple en las  series temporales. Por ejemplo, no es lo mismo analizar la correlación entre peso y altura de bebés (cada altura es independiente a las demás) que entre la serie temporal de casos de COVID y de índices económicos (los casos de COVID de un día son muy dependientes de los de ayer, autocorrelación).
+
+Por ello, utilizaremos datos 'estáticos'. Es decir, datos de un instante de tiempo para los diferentes países. Utilizzaremos la misma estrategia que venimos comentando, elegir la proporción de casos del país el textcolor{red}{día 30 después de contabilizar 100 muertes}.
+
+Con ello, ya podremos realizar las siguientes correlaciones:
+
+  * Correlación entre proporción de contagiados (día 30 DC) y proporción de test realizados (dia 30 DC)
+  * Correlación entre proporción de contagiados (día 30 DC) y variación de los índices económicos.
+
+Nuestro objetivo es realizar análisis de los siguientes puntos:
+
+### Regresión
+La predicción de las series temporales del covid es quizá es el tema más candente, y está poniendo en vista las grandes dificultades en la predicción de evolución de fenómenos epidemiológicos. Los principales problemas que ocurren en modelos epidemiológicos es que siguen un modelo exponencial. El fenómeno de contagio se basa en sofisticaciones del modelo SIR (con base en exponenciales). En el paper de José Cuesta https://arxiv.org/pdf/2004.08842.pdf \textcolor{red}{CITAR} se llega a la conclusión de que estos modelos tienen mucha incertidumbre derivada de los parámetros elegidos, lo que da lugar a muchos escenarios diferentes. Tantos escenarios de confianza diferentes y sus intervalos de confianza, hace que no sea predecible de manera óptima los fenómenos epidemiológicos, dando innumerables escenarios sólo a 4 días vista.
+
+Esta complejidad y dificultad hace que para nosotros intentar estimar el número de casos sea una tarea muy difícil. 
+
+Sin embargo, con objetivo de aplicar algñun modelo de *Time Series Forecasting* aplicaremos modelos de predicción utilizados en otras investigaciones, como el modelo autoregresivo ARIMA, y así ver cómo estima el modelo.
+
+* [ejemplo](https://rviews.rstudio.com/2020/03/05/covid-19-epidemiologywith-r/)
+* https://www.medrxiv.org/content/10.1101/2020.04.18.20070631v1.full.p
+df
+* https://www.medrxiv.org/content/10.1101/2020.03.30.20047803v1.full.p
+df
+* [+ejemplos](https://cran.rproject.org/web/packages/covid19.analytics/vignettes/covid19.analytics.h
+tml)
+* [COVID-19: ARIMA based time-series analysis to forecastnear
+future](https://arxiv.org/ftp/arxiv/papers/2004/2004.07859.pdf)
+
+Por otro lado, intentaremos explicar la proporción de muertes basandonos en características sociodemográficas del país. Es decir, **intentaremos explicar la variable objetivo proporción de fallecidos a travñes de las variables explicativas densidad de población, porcentaje de mayores o Marsh Political Risk Index**.
+
+
+### Analisis que realizaremos
+
+Por lo tanto, y resumiendo, los analisis a realizar serán los siguientes
+
+* Contrastes hipótesis:
+  * Contraste proporciones Esp-Ita, Esp-Port, Esp-ALe
+  * Contraste anova entre continentes
+* Correlaciones:
+  * Correlación entre proporcion de tests y proporcion de contagiados.
+  * Correlacion entre variación de indice y numero de casos-O-fallecidos.
+* Regresión:
+  * Time Series Forecasting: ARIMA
+  * Proporción a x días ~ densidad + %gente mayor  + etc
+
+Como es de entender, no podemos realiar estos análsisis solo con los datos de la primera práctica (cubo de dato país fecha). En el siguiente apartado, describiremos los dos diferentes dataser que utilizaremos con el objetivo de realizar estos análisis.
+
+
+
+## Descripción del dataset
+
+### Descripción breve general del dataset
+Nuestro dataset evolucionará con respecto al de la primera práctica. Tendremos dos datasets, uno de series temporales de los datos del COVID (el de la primera práctica) y otro con datos estáticos de cada país. El motivo de tener dos datasets lo explicaremos más adelante en la sección \ref{alternativas_csv} y sobre todo en la sección \ref{alternativas_csv}. Por ello, a parte del cubo de datos País-Dato-Fecha, obtendremos datos de cada país de:
+
+  * Total de población de cada país
+  * Densidad de población
+  * Continente
+  * Porcentaje de población mayor
+
+El dataset de la primera práctica tendrá la evolución temporal de 5 datos relativos al covid por países. Guardamos los datos relativos a **contagiados, casos activos, recuperados, muertes y tests realizados**. Es decir para cada uno de los países en los que haya casos registrados, guardamos un dato al día (de manera automática) cada uno de los datos recién enumerados. Al final, reflejamos la serie temporal de cada uno de esos datos por países. Por lo tanto, resultado de la anterior práctica, tenemos **5 csv**: la variación temporal de cada tipo de dato por país (ver Figura \ref{alternativas_csv}).
+
+![Representación gráfica \label{alternativas_csv}](./img/alternativas.png)
+
+Por otro lado, tendremos para cada país la proporción de contagiados y fallecidos el \textcolor{red}{día 30 después de contabilizar 100 muertes}, acompañado del número total de la población, densidad de población, continente, porcentaje de población mayor, etc.
+
+
+### Dataset final
+Tendremos **dos datasets**, cada uno de ellos usado para un diferente tipo de análisis. 
+
+* Por un lado tendremos el cubo de series temporales de los datos.
+  * Lo utilizaremos para realizar Analisis de series temporales. Concretamente la regesión con ARIMA.
+* Por otro lado, tendremos una tabla final con datos de los países. Le llamaremos dataset de datos estáticos. 
+  * Lo utilizaremos para los contrastes de hipótesis, correlaciones y regresión de la proporción de muertes a través de características sociodemográficas.
+  * Lo explicamos más extensamente en la sección \ref{sec:analisis}. Contiene los datos de un país de manera estática, es decir: los datos de contagiados o fallecidos el día x después de las 100 muertes, datos de densidad, población, vejez de la población del país, nivel de ingresos, etc.
+  
+  
+| País       | Continente | Contag dia 40 DC | Fallec dia 40 DC | tests dia 40 DC | Densidad  total | Población  | \%vejez | Nivel Ingresos ONU  |
+|------------|------------|-----------------|-----------------|-------------------|-----------|-----------|---------|---------------------|
+| España     | Eu | n | n | n | n | n | n | st | n |
+| Italia     | Eu | n | n | n | n | n | n | st | n |
+| Zambique   | Af | n | n | n | n | n | n | st | n |
+
+## Fuentes
+Link a Worldometers - COVID-19
+
+* Link a Worldometers - COVID-19: https://www.worldometers.info/coronavirus.
+* Fuente población
+* Fuente extension o densidad de poblacion
+* Continente
+* Nivel de ingresos del país
+  
+
+## Cómo se ha recogido y fuentes
+
+### Cubo de datos Dato-Pais-Fecha
+Se detalló en la anterior práctica la recogida de datos del cubo Dato-Pais-Fecha. Hicimos scrapping sobre la página de [Worldometers-Coronavirus](https://www.worldometers.info/coronavirus), en el script alojado en el directorio `src\Scraping_covid19.py`. En esa página tenemos **una tabla** que muestra los **valores de los datos (contagiados, activos, etc) por país en el momento actual**. Es decir, las **filas los países y las columnas los datos del momento actual**. Nuestro enfoque ha sido **automatizar el lanzamiento del scraping** para que se ejecute una vez al día y se vayan **actualizando automáticamente los csv de las series temporales de los datos por país**. Por ello, la primera fecha de la que tenemos datos es del 30/03, que fue el primer día que teníamos desarrollado el scraping y lo lanzamos. La herramienta **Travis** ha sido utilizada para automatizar el lanzamiento del script y el *autodeploy* a *Github* (*Travis* permite que, en su plataforma, una vez al día y de forma planificada y automática se ejecute el scrapping, se actualizan las tablas de datos y se haga un commit automático para actualizar los datos en el github).
+
+* Link a (Worldometers - COVID-19)[https://www.worldometers.info/coronavirus]: https://www.worldometers.info/coronavirus.
+
+### Población y densidad de población
+\textcolor{red}{To Do} 
+También de worldometers.
+
+### Continente, pocentaje mayores de 65 y nivel de ingresos del pais
+\textcolor{red}{To Do} 
+
+\textcolor{red}{To Do}
+https://data.worldbank.org/indicator/SP.POP.65UP.TO.ZS?end=2018&start=2017
+
+csvs de datos y metadatos bajados de world bank. Son 2 ficheros csv que leeremos y les haremos join para tener los datos del país.
+
+
+En el mismo csv que arriba, en los metadatos.
+
+
+
+\newpage
+
+# Integración y selección de datos \label{sec:integracion}
+
+Como hemos comentado necesitamos dos datasets: El cubo de series temporales y el dataset de datos estáticos. El cubo de series temporales ya le tenemos realizado. Para **integrar los datos de diferentes origenes al dataset de datos estáticos realizaremos los siguientes pasos**:
+
+1. Leer los dos CSV de **World Bank** (nuevos en esta práctica) para sacar los datos de continente, nivel de ingresos y porcentaje de población mayor de 65 años de cada país. Haremos un Join de ambos y nos quedaremos con los datos que queremos. Tendremos este $DF_1$.
+
+| País       | Continente |  \%vejez | Nivel Ingresos ONU  |
+|------------|------------|---------|----------------------|
+| España     | Eu | n | st | n |
+| Italia     | Eu | n | st | n |
+| Zambique   | Af | n | st | n |
+
+2. Leer csv de series temporales de **Worldometers** (*cubo* de la primera práctica): leeremos 3 csv del *cubo* relativos a las series temporales de de contagios, fallecidos y tests. Sacamos el dato estático de cada país. Es decir, calculamos para cada país su día \textcolor{red}{40 despues de llegar la pandemia} y obtenemos los datos de contagiados, fallecidos y tests ese día. Tendremos este $DF_2$.
+
+| País       | Contagiados dia 40 DC | Fallecidos dia 40 DC | tests/1M dia 40 DC |
+|------------|----------------------|---------------------|-------------------|
+| España | n | n | n |
+| Italia | n | n | n |
+| Zambique | n | n | n |
+
+3. Leemos el csv de la población **Worldometers** (nuevo en esta práctica): cruzamos los datos de contagiados y fallecidos con población para poder sacar proporciones cuando se necesiten. Tendremos este $DF_2$.
+
+| País       | Contag dia 40 DC | Fallec dia 40 DC | tests/1M dia 40 DC | Población | Densidad |
+|------------|------------------|---------------------|-------------------|-----------|----------|
+| España | n | n | n | n | n |
+| Italia | n | n | n | n | n |
+| Zambique | n | n | n | n | n |
+
+4. Hacemos join del dataset resultante de Worldometers y el de worldbank. Join de $DF_1$ y $DF_2$.
+
+| País       | Continente | Contag dia 40 DC | Fallec dia 40 DC | tests/1M dia 40 DC | Densidad  | Población | \%vejez | Nivel Ingresos ONU  |
+|------------|------------|------------------|------------------|-------------------|-----------|-----------|---------|---------------------|
+| España     | Eu | n | n | n | n | n | n | st | n |
+| Italia     | Eu | n | n | n | n | n | n | st | n |
+| Zambique   | Af | n | n | n | n | n | n | st | n |
+
+## Paso 1 - Leer WorldBank y hacer Join
+
+Leemos metadatos del país.
+```{r}
+
+continente_ingresos <- read.csv(file="..\\csv\\WorldBankData\\Metadata_Country.csv")
+
+continente_ingresos <- continente_ingresos %>% select("ï..Country.Code", 
+                                                      TableName, 
+                                                      Region, 
+                                                      IncomeGroup )
+
+head(continente_ingresos)
+```
+
+Leemos serie de porcentaje de mayores y nos quedamos con el ultimo año con datos
+```{r}
+porcentaje_mayores <- read.csv(file="..\\csv\\WorldBankData\\UP65_Percentage.csv", 
+                                                          sep = ",")
+porcentaje_mayores <- porcentaje_mayores %>% select(Country.Code, 
+                                                    "ï..Country.Name", X2018)
+head(porcentaje_mayores)
+```
+
+Hacemos join entre ambos dataframes para tener los datos de porcentaje de vejez y metadatos
+```{r}
+country_incomes_elderly_continent <-merge(porcentaje_mayores, continente_ingresos, 
+                                          by.x="Country.Code", by.y="ï..Country.Code")
+country_incomes_elderly_continent <- country_incomes_elderly_continent %>% 
+                                                    select(Country.Code,
+                                                    "ï..Country.Name", 
+                                                    Region, IncomeGroup, 
+                                                    X2018)
+
+country_incomes_elderly_continent <- country_incomes_elderly_continent %>% 
+                                                    rename(Continent=Region,
+                                                           Country.Name="ï..Country.Name",
+                                                           UpTo65=X2018)
+head(country_incomes_elderly_continent)
+```
+
+## Paso 2 - Leer series temporales del dataset cubo y calcular proporcion dia 40 Despues de 100 muertes para cada pais
+
+También limpiaremos valores Na de indice de paises (borrado de filas) y de los valores de los días. Si hay indice del país, que haya una casilla vacia (NaN significa que el número es 0, casilla vacía de la tabla de Worldometers).
+
+Primero leemos los datos de las series temporales, que les necesitaremos para calcular el día 40 depúes de 100 muertes de cada país. Limpiamos países nulos y valores Nan.
+```{r}
+total_casos <- read.csv(file="..\\csv\\covid_19_series\\TotalCases_covid19_timeserie.csv", 
+                                                          sep = ",")
+total_muertes <- read.csv(file="..\\csv\\covid_19_series\\TotalDeaths_covid19_timeserie.csv", 
+                                                          sep = ",")
+total_tests <- read.csv(file="..\\csv\\covid_19_series\\TotalTests_covid19_timeserie.csv", 
+                                                          sep = ",")
+#Quitamos indices de paises vacios
+total_casos <- total_casos[!is.na(total_casos$Country),]
+total_muertes <- total_muertes[!is.na(total_muertes$Country),]
+total_tests <- total_tests[!is.na(total_tests$Country),]
+
+#Quitamos datos de el mundo
+total_casos <- total_casos[!total_casos$Country=='World',]
+total_muertes <- total_muertes[!total_muertes$Country=='World',]
+total_tests <- total_tests[!total_tests$Country=='World',]
+
+#Limpiamos los casos donde hay Nan en la medida: será 0.
+total_casos[is.na(total_casos)] <- 0
+total_muertes[is.na(total_muertes)] <- 0
+total_tests[is.na(total_tests)] <- 0
+
+#Mostramos ejemplos de unas pocas columnas y unas pocas filas
+head(total_muertes[,1:3])
+```
+
+
+Como hemos comentado, tenemos que obtener el dato del día 20 desde el día para el que cada país haya superado las 100 muertes, con el objetivo de comparar de forma objetiva diferentes países: misma fase de la pandemia. **Por ello para cada país buscaremos el día en el que se superan esas muertes. Realmente, para cada país, obtendremos el índice de la columna donde se pasan por primera vez los 100 fallecidos**, con el objetivo de sumarle después los 30 días y obtener nuestro dato de **día 30 después del Covid** para cada país.
+
+ * Existe un problema. Nuestro primer scrapping de la primera práctica fue el dia 30/03, y en ese día ya había varios países que superaban con creces los 100 fallecidos. Nos guataría utilizar nuestros datos y no buscar nuevos (i.e. del Jhon Hopkins University) para realizar una práctica solucionando los problemas del propio dataset. **Por ello, debemos estimar hace cuantos días se llegó a las 100 muertes**. Se estima que las muertes se doblan cada dos días. Es decir $fallecidos=(dias/2)^2 \rightarrow dias=\sqrt{fallecidos/4}$. Como queremos estimar el día de las 100 muertes **aplicaremos un suavizado a la función** sacando el 4 de la raiz: $dias_{100}=\sqrt{fallecidos}/4$. Por ello, si vemos que en el primer dia del scrapping tenemos ya mas de 200 muertes, calculamos el índice el negativo, para que después al sumarle 30 a esa fecha, nos de una columna de nuestro dataset y correspondiente al día 30 Después del Covid.
+ 
+ Estimación vs real en algunos ejemplos (el día es el día de Marzo donde se superaron las 100 muertes):
+ 
+| **Pais**   |      **Estimacion**          | **Real** |
+|------------|------------------------------|----------|
+| Italia     | $30-(sqrt(10779)/4)=$ Día 4  | día 4    |
+| España     | $30-(sqrt(6803)/4)=$ Día 9   | día 13   |
+| Francia    | $30-(sqrt(2500)/4)=$ Día 17  | día 16   |
+| UK         | $30-(sqrt(1228)/4)=$ Día 21  | día 19   |
+| Alemania   | $30-(sqrt(771)/4)=$ Día 23   | día 24   |
+| Belgica    | $30-(sqrt(431)/4)=$ Día 24   | día 25   |
+
+
+
+ 
+```{r}
+index_100<-function(row){
+  #Inicializamos los datos del pais, sera c(nombre, idColumna20diasDC)
+  res <- c(row[1], NaN)
+  #Vemos el numero de columnas que hay: numero de dias+nombrepais
+  ncols <- length(names(row))
+  #Recorremos todos los dias(por eso desde el 2, no recorremos el nombre)
+  for(idxCol in seq(2,ncols)){
+    #Obtenemos los fallecidos de ese dia
+    fallec = as.numeric(row[idxCol])
+    #Si superan nuestro umbral de 100 establecemos el resultado, BREAK del loop y return
+    #Es decir, el primer valor que pase de 100 romperá el bucle
+    if(fallec>100){
+      if((idxCol==2)&(fallec>200)){
+        #Si ya en la primera columna hay mas de 100, estimamos los dias
+        res<-c(row[1], -round((sqrt(fallec)/4))+40)
+      }else{
+        res<-c(row[1], as.numeric(idxCol)+40)
+      }
+      #Salimos del bucle para devolver el resultado segun encontramos el 1er valor >100
+      break
+    }
+  }
+  return(res)
+}
+
+```
+
+Aplicamos nuestra funcion para obtener un **dataset con el nombre de cada país y el índice de la columna del día 20 después del Covid** (tomando como día de llegada el día que se superan las 100 muertes).
+```{r}
+#Aplicamos la funcion a cada linea del df, a cada pais
+death_100 <- apply(total_muertes, 1, FUN=index_100)
+#Creamos el dataframe de la lista resultante
+death_100 <- as.data.frame(t(death_100))
+#Damos nombre a las coumnas
+colnames(death_100) <- c("Pais", "idCol")
+#Convertimos la columna a numerico
+death_100$idCol <- as.numeric(as.character(death_100$idCol))
+#Ordenamos los paises por la llegada del Covid
+death_100 <- death_100[order(death_100$idCol),]
+#Mostramos un ejemplo del resultado
+death_100[c(1,2,4,20,50,65,100),]
+```
+
+
+Ahora elegiremos los datos de contagiados y fallecidos para cada país de su día correspondiente.
+
+```{r}
+get_deaths_40_days <- function(row){
+  
+  idCol <- as.numeric(row["idCol"])
+  fall <- total_muertes[total_muertes$Country==row["Pais"],idCol]
+  casos <- total_casos[total_casos$Country==row["Pais"],idCol]
+  test <- total_tests[total_tests$Country==row["Pais"],idCol]
+  
+  if(is.null(casos)){
+    casos<-0
+    fall<-0
+    test<-0
+  }
+  return(c(row["Pais"],casos,fall,test))
+}
+
+```
+
+
+
+```{r}
+day_40_dc <- apply(death_100, 1, FUN=get_deaths_40_days)
+day_40_dc <- as.data.frame(t(as.data.frame(day_40_dc)))
+colnames(day_40_dc) <- c("Pais", "CasosDia40DC", "FallDia40DC", "Tests")
+
+day_40_dc$CasosDia40DC <- as.numeric(as.character(day_40_dc$CasosDia40DC))
+day_40_dc$FallDia40DC <- as.numeric(as.character(day_40_dc$FallDia40DC))
+day_40_dc$Pais <- as.character(day_40_dc$Pais)
+
+#Vemos los países que tenemos en total (de momento son todos)
+dim(day_40_dc)
+head(day_40_dc)
+```
+
+
+Ahora, tenemos que elegir los que han llegado a esa fase de la pandemia. Es decir, hay 3 casuísicas:
+
+* Que idcol sea menor de 58 (son las columnas que tenemos), lo que significa que el dia 40 después de las 100 muertes están en el dataset.
+* Que idcol sea mayor que 58, con lo que quiere decir que el país no haya llegado al día 40 después de las 100 muertes.
+* Que idCol sea Nan, lo que significa que el país no ha llegado a las 100 muertes.
+
+A nosotros nos interesa solo el primer conjunto de paises. Por eso, en la anterior función, hemos establecido los otros dos casos con los valores casos y fallecidos a 0.
+
+```{r}
+day_40_dc <- day_40_dc[(day_40_dc$CasosDia40DC>0),]
+#Contamos los países con los que podemos realizar en análisis estático.
+dim(day_40_dc)
+#Mostramos ejemplo del dataset
+head(day_40_dc)
+```
+
+* Destacamos que las primera columnas del dataset no se corresponden día a día. Sin embargo, al obtener los índices de las columnas todos >=14, a partir de ahí todos cumplen con una columna por día.
+
+Con esto hemos acabado el segundo paso, el del cálculo de cada país de los contagiados, fallecidos y tests el día 40 después de los 100 fallecidos. Esto será utilizado para nuestro dataset estático (contrastes de hipótesis, alguna correlación y regresión). Este dataset tiene 46 países.
+
+## Paso 3 - Cruzar datos por país dia 40 DC con datos de población
+
+Leemos el archivo de datos de población
+```{r}
+poblacion <- read.csv(file="..\\csv\\world_population_2020.csv")
+poblacion <- poblacion %>% rename(Country="Country..or.dependency.",
+                                  Poblacion="Population..2020.",
+                                  Densidad="Density..P.KmÂ².") 
+head(poblacion[order(poblacion$Country),])
+```
+
+
+Debemos hacer un Join del dataframe de los datos de contagios, fallecidos y tests el dia 40 con el dataframe de la población y densidad obtenido de un scrapping a Worldometers. Antes de hacer el join debemos mapear algunos nombres de países (nos hemos dado cuenta del error al hacer un letf outer join y ver países con nulos).
+```{r}
+day_40_dc[day_40_dc$Pais=='USA',]$Pais <-"United States"
+day_40_dc[day_40_dc$Pais=='UK',]$Pais <-"United Kingdom"
+day_40_dc[day_40_dc$Pais=='S. Korea',]$Pais <-"South Korea"
+day_40_dc[day_40_dc$Pais=='Czechia',]$Pais <-"Czech Republic (Czechia)"
+```
+
+Realizamos el merge de las tablas. Tendremos los 46 países que están en la fase de haber pasado 40 días después de las 100 muertes, pero ahora con los datos de población y densidad añadidos.
+```{r}
+covid_country<-merge(day_40_dc, poblacion, by.x="Pais", by.y="Country",all.x = TRUE)
+covid_country<-covid_country[order(-covid_country$CasosDia40DC),]
+head(covid_country)
+```
+
+## Paso 4 - Merge de datos covid por país y metadatos (Merge 3-1)
+
+Primero de todo vemos los países que no coinciden en el merge. Este es el paso que hemo hecho también en el anterior caso, pero que en el anterior caso hemos obviado contarle.
+```{r}
+aux<-merge(covid_country, country_incomes_elderly_continent, by.x="Pais", 
+           by.y="Country.Name",all.x = TRUE)
+aux[is.na(aux$Country.Code),]
+```
+
+Mapeamos los nombres para que coincidan
+```{r}
+country_incomes_elderly_continent$Country.Name <- 
+  as.character(country_incomes_elderly_continent$Country.Name)
+country_incomes_elderly_continent[country_incomes_elderly_continent$Country.Name==
+                          'Czech Republic',]$Country.Name <-"Czech Republic (Czechia)"
+country_incomes_elderly_continent[country_incomes_elderly_continent$Country.Name==
+                                    'Egypt, Arab Rep.',]$Country.Name <-"Egypt"
+country_incomes_elderly_continent[country_incomes_elderly_continent$Country.Name==
+                                    'Iran, Islamic Rep.',]$Country.Name <-"Iran"
+country_incomes_elderly_continent[country_incomes_elderly_continent$Country.Name==
+                                    'Russian Federation',]$Country.Name <-"Russia"
+country_incomes_elderly_continent[country_incomes_elderly_continent$Country.Name==
+                                    'Korea, Rep.',]$Country.Name <-"South Korea"
+	
+```
+
+Merge final
+```{r}
+country_covid_and_metadata <- merge(covid_country, country_incomes_elderly_continent, 
+                                    by.x="Pais", by.y="Country.Name",all.x = TRUE)
+#Borramos el codigo del pais
+country_covid_and_metadata <- country_covid_and_metadata %>% select(-Country.Code)
+head(country_covid_and_metadata)
+```
+
+**En este momento ya hemos integrado todas las diferentes fuentes de datos para hacer nuestro dataset estático de datos de países**.
+El resumen del *pipeline* de integración y transformación es el comentado a principio de esta sección. Sin embargo, añadiremos una imagen ilustrativa del mismo concretamente la figura \ref{fig:pasosetl}.
+
+![Pasos de la integración y selección \label{fig:pasosetl}](./img/pasosetl.png)
+
+\newpage
+
+# Limpieza de datos
+
+Nos centraremos en el dataset que acabamos de crear, no en las series temporales. Aunque como hemos visto, en la anterior sección de integración hemos incluido algunas tareas como tratamiento de valores nulos.
+
+## Tipos de datos
+
+Primero vemos si los tipos de datos de R coinciden con la naturaleza de los mismos.
+```{r}
+sapply(country_covid_and_metadata, class)
+```
+
+Vemos que el único dato que no corresponde a su naturaleza es el número de tests. Para segurarnos que no hay desbordamientos debido a números grandes, también cambiamos el tipo de dato de población.
+
+```{r}
+country_covid_and_metadata$Tests <- as.numeric(as.character(country_covid_and_metadata$Tests))
+country_covid_and_metadata$Poblacion <- as.numeric(country_covid_and_metadata$Poblacion)
+```
+
+
+## Nulos y vacíos
+
+En la construción del nuevo dataset estático, se han incorporado los mecanismos para limpiar de nulos, con lo que en la anterior sección de integración hemos hecho tareas de ésta índole. Vemos como no hay un solo valor nulo en todo el dataframe.
+```{r}
+sapply(country_covid_and_metadata, function(x) sum(is.na(x)))
+```
+
+Para las columnas numéricas, valores nulos podrían ser el 0. Sin embargo, esto lo dejamos para la fase de detección de outliers.
+
+## Outliers
+
+Los valores outliers son aquellos que se alejan de la distribución habitual de los datos. Estos outliers se pueden dar a varias causas: errores en la insercción de datos, medidas de individuos fuera de la población, o datros correctos pero que simplemente son altos. Sabiendo las características de los datos, para muchos campos tendremos vaalores altos pero totalmente explicables.
+
+Trataremos los outliers campo por campo, empezando por los numéricos.
+
+```{r}
+show_outlier<-function(data){
+  values <- boxplot.stats(data)$out
+  idx <- which( data %in% values)
+  cat("Valores extremos:", toString(values), "\n" )
+  (country_covid_and_metadata[idx, ])
+}
+```
+
+
+Vemos los **casos** que son outlier:
+```{r}
+show_outlier(country_covid_and_metadata$CasosDia40DC)
+```
+
+Estos valores pueden darse perfectamente, países en los que se han detectado muchos casos.
+
+Vemos los **fallecidos** que son outlier:
+```{r}
+show_outlier(country_covid_and_metadata$FallDia40DC)
+```
+
+Al igual que antes son casos que se han dado, no hay fallos. Se explcia porque son los países con más afectados y que tienen un gran número de población.
+
+
+Vemos los **tests** que son outlier:
+```{r}
+show_outlier(country_covid_and_metadata$Tests)
+```
+
+Son valores totalmente correctos, explicados porque son países grandes y que tienen la estrategia de hacer tests.
+
+Vemos los **poblacion** que son outlier:
+```{r}
+show_outlier(country_covid_and_metadata$Poblacion)
+```
+
+Son valores correctos, correspondientes a los paises más grandes del mundo.
+
+Vemos los **densidad** que son outlier:
+```{r}
+show_outlier(country_covid_and_metadata$Densidad)
+```
+
+Con la tónica habitual, vemos que son valores de densidad altos, pero son perfectamente correctos.
+
+Vemos los **porcentajes de vejez** que son outlier:
+```{r}
+show_outlier(country_covid_and_metadata$UpTo65)
+```
+
+Vemos que están todos dentro de los valores normales de ola muestra.
+
+## Incongruencias
+Otro aspecto que hay que mirar en nuestros casos en la consistencia de los mismos. En nuestro caso, comprobaremos que el número de casos realizados es menor o igual al número de tests realizados. En caso contrario, habría algún fallo en los datos.
+
+```{r}
+country_covid_and_metadata[country_covid_and_metadata$Tests
+                           < country_covid_and_metadata$CasosDia40DC,]
+```
+
+
+```{r}
+country_covid_and_metadata$Tests[country_covid_and_metadata$Tests
+                           < country_covid_and_metadata$CasosDia40DC]<-10
+```
+
+En este caso vemos que China no cumple esa condición. No solo es que no cumpla la restricción, esque además los test realizados son 0. Esto significará que hay falta de datos sobre los test realizados de este país. **Imputaremos el valor basándonos en una regresión lineal de los test a través de los casos y los fallecidos.** Primero creamos el modelo:
+
+```{r}
+model_tests <- lm(Tests∼CasosDia40DC+FallDia40DC, data=country_covid_and_metadata)
+summary(model_tests)
+```
+
+Vemos que el resultado  nos indica un $R^2$ de 0.72. Es decir, que el modelo explica el 72% de la vrianza original de los datos. Además, vemos que tanto el p-valor para el modelo (para $R^2$), como para las dos variables, nos indican que el resultado es estadísticamente significativo con un nivel de significancia muy bajo. Por ello, consideramos el modelo suficientemente bueno par imputar los tests de China. Imputamoes el valor:
+
+```{r}
+casos = country_covid_and_metadata[country_covid_and_metadata$Pais=='China',]$CasosDia40DC
+falle = country_covid_and_metadata[country_covid_and_metadata$Pais=='China',]$FallDia40DC
+newdata <- data.frame( CasosDia40DC = casos, FallDia40DC=falle)
+(pr <- predict(model_tests, newdata))
+country_covid_and_metadata$Tests[country_covid_and_metadata$Pais=='China']<-round(pr)
+```
+
+
+# Exportar datos limpios
+
+Guardamos nuestro dataset en un csv. Mostramos el resultado de la tabla en el Cuadro \ref{tab:tabladatos}
+```{r tabladatos}
+write.csv(country_covid_and_metadata, "..\\csv\\country_40dc_metadata.csv", row.names=FALSE)
+
+head(country_covid_and_metadata) %>% kable(caption="Head de Dataset Final") %>% 
+  kable_styling(latex_options="scale_down")
+```
+
+
+\newpage
+
+
+
+
+# Analisis de datos
+\textcolor{red}{Recordar hacer analisis de normalidad y varianza cuando toque}
+
+
+# Agradecimientos
+\textcolor{red}{Todo}
+* Principalmente, agradecer a la asociación *Worldometers* [@worldo], asociación de estadísticas mundiales en tiempo real, por tener los datos actualizados de manera tan rápida y en abierto. 
+* Después, tanto a los estudios de la *Johns Hopkins University* [@jhu], como a la asociación *Our world in Data* de la *Oxford University* [@roser2020coronavirus], por sus trabajos que nos han permitido descubrir fuentes da calidad.
+* Agradecer los recursos encontrados para realizar el scraping, tanto en [@lawson2015web] como en el módulo [@webscrapuoc], propio de la UOC.
+
+
+# Inspiración
+\textcolor{red}{ToDo}
+Hablar de J. Arenas y demás.
+
+
+
+
+# Código fuente y dataset en Zenodo
+\textcolor{red}{ToDo}
+* El código fuente del scraping, actualización de datos y autoimatización mediante *Travis* se encuentra en [este enlace](https://github.com/AdrianArnaiz/scrap_uoc). Además hay archivos `readmemd` en los directorios que dan más información del proyecto.
+
+* El dataset (conjunto de 5 csv) se sube a *Zenodo*, sin embargo, cabe **destacar que debido al potencial añadido de la autoactualización con *Travis*, este dataset está en continua actualización diaria de los datos**. El dataset con mayor actualización se coresponderá al que tenemos en el repositorio.
+  * **DOI de Zenodo**: 10.5281/zenodo.3748050.
+  * **Link a Zenodo**: https://zenodo.org/record/3748050#.XpD5w8gzZ9A
+  
+\newpage
+
+# Tabla de contribuciones
+\textcolor{red}{ToDo}
+| Contribuciones       | Firma        |
+|----------------------|--------------|
+| Investigación previa | P.G.S, A.A.R |
+| Redacción respuestas | P.G.S, A.A.R |
+| Desarrollo de código | P.G.S, A.A.R |
+
+\newpage
+\textcolor{red}{ToDo}
+
