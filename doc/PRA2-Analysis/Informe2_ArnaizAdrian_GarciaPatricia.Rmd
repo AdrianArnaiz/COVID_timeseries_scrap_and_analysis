@@ -80,7 +80,7 @@ library(kableExtra)
 # Introducción
 
 ## Contexto
-En el contexto de obtenciónd el dataset explicado en la anterior práctica, nos gustaría realizar un análisis de varios aspectos de la pandemia por **Covid-19**. En este contexto es importante analizar con rigor diferentes aspectos de la pandemia, para dar lugar a consluiones basaddas en esos análisis. 
+En el contexto de obtención del dataset explicado en la anterior práctica, nos gustaría realizar un análisis de varios aspectos de la pandemia por **Covid-19**. En este contexto es importante analizar con rigor diferentes aspectos de la pandemia, para dar lugar a consluiones basaddas en esos análisis. 
 
 ## Análisis de datos sobre el COVID \label{sec:analisis}
 \textcolor{red}{To Do} 
@@ -90,7 +90,7 @@ Primero de todo, nos gustaría explicar la **complicación de las series tempora
 
 Nos gustaría realizar contrastes de hipótesis sobre la diferencia de afectación entre países o continentes. 
 
-  * La primera complicación esque las *series temporales son muestras con gran autocorrelación en sus datos*, en la que cada observación es muy dependiente de las observaciones temporales anteriores, tienen un orden. Esto rompe el principio de independencia entre observaciones necesario para realizar la mayoría de los análisis estadísticos. Otro problema son los datos a comparar. Es decir, normalmente tenemos una muestra de datos asumiendo en primer lugar independencia (y después normalidad, además de que si lo comparamos con otra muestra también suponemos igualdad de varianzas), por ejemplo, una muestra de pesos y alturas de bebés. No podemos tratar nuestra serie temporal como una muestra de pesos, ya que en nuestra serie temporal las observaciones a lo largo del tiempo no son independientes. Por ello, no podemos realizar un típico contraste de hipótesis, tenemos que buscar otro enfoque.
+  * La primera complicación es que las *series temporales son muestras con gran autocorrelación en sus datos*, en la que cada observación es muy dependiente de las observaciones temporales anteriores, tienen un orden. Esto rompe el principio de independencia entre observaciones necesario para realizar la mayoría de los análisis estadísticos. Otro problema son los datos a comparar. Es decir, normalmente tenemos una muestra de datos asumiendo en primer lugar independencia (y después normalidad, además de que si lo comparamos con otra muestra también suponemos igualdad de varianzas), por ejemplo, una muestra de pesos y alturas de bebés. No podemos tratar nuestra serie temporal como una muestra de pesos, ya que en nuestra serie temporal las observaciones a lo largo del tiempo no son independientes. Por ello, no podemos realizar un típico contraste de hipótesis, tenemos que buscar otro enfoque.
 
   * Por otro lado, **para hacer un contraste de hipótesis se comparan distribuciones**. Si comparamos un dato de un dia concreto en el tiempo para dos países, son dos puntos individuales, que no tendrán varianza. Esto **lo resolvemos realizando contrastes de hipótesis sobre la proporción** \textcolor{red}{Citar modulo estadistica}. Consideramos el contagio o no como una variable que proviene de una distribución de Bernouilli con posibilidad de contagio $p$ y posibilidad de no contagiarse de $1-p$. Por ello compararemos las proporciones de contagio de dos países.
 
@@ -116,11 +116,11 @@ Con ello, ya podremos realizar las siguientes correlaciones:
 Nuestro objetivo es realizar análisis de los siguientes puntos:
 
 ### Regresión
-La predicción de las series temporales del covid es quizá es el tema más candente, y está poniendo en vista las grandes dificultades en la predicción de evolución de fenómenos epidemiológicos. Los principales problemas que ocurren en modelos epidemiológicos es que siguen un modelo exponencial. El fenómeno de contagio se basa en sofisticaciones del modelo SIR (con base en exponenciales). En el paper de José Cuesta https://arxiv.org/pdf/2004.08842.pdf \textcolor{red}{CITAR} se llega a la conclusión de que estos modelos tienen mucha incertidumbre derivada de los parámetros elegidos, lo que da lugar a muchos escenarios diferentes. Tantos escenarios de confianza diferentes y sus intervalos de confianza, hace que no sea predecible de manera óptima los fenómenos epidemiológicos, dando innumerables escenarios sólo a 4 días vista.
+La predicción de las series temporales del covid es quizá el tema más candente, y está poniendo en vista las grandes dificultades en la predicción de evolución de fenómenos epidemiológicos. Los principales problemas que ocurren en modelos epidemiológicos es que siguen un modelo exponencial. El fenómeno de contagio se basa en sofisticaciones del modelo SIR (con base en exponenciales). En el paper de José Cuesta https://arxiv.org/pdf/2004.08842.pdf \textcolor{red}{CITAR} se llega a la conclusión de que estos modelos tienen mucha incertidumbre derivada de los parámetros elegidos, lo que da lugar a muchos escenarios diferentes. Tantos escenarios de confianza diferentes y sus intervalos de confianza, hace que no sea predecible de manera óptima los fenómenos epidemiológicos, dando innumerables escenarios sólo a 4 días vista.
 
 Esta complejidad y dificultad hace que para nosotros intentar estimar el número de casos sea una tarea muy difícil. 
 
-Sin embargo, con objetivo de aplicar algñun modelo de *Time Series Forecasting* aplicaremos modelos de predicción utilizados en otras investigaciones, como el modelo autoregresivo ARIMA, y así ver cómo estima el modelo.
+Sin embargo, con objetivo de aplicar algún modelo de *Time Series Forecasting* aplicaremos modelos de predicción utilizados en otras investigaciones, como el modelo autoregresivo ARIMA, y así ver cómo estima el modelo.
 
 * [ejemplo](https://rviews.rstudio.com/2020/03/05/covid-19-epidemiologywith-r/)
 * https://www.medrxiv.org/content/10.1101/2020.04.18.20070631v1.full.p
@@ -135,9 +135,9 @@ future](https://arxiv.org/ftp/arxiv/papers/2004/2004.07859.pdf)
 Por otro lado, intentaremos explicar la proporción de muertes basandonos en características sociodemográficas del país. Es decir, **intentaremos explicar la variable objetivo proporción de fallecidos a travñes de las variables explicativas densidad de población, porcentaje de mayores o Marsh Political Risk Index**.
 
 
-### Analisis que realizaremos
+### Análisis que realizaremos
 
-Por lo tanto, y resumiendo, los analisis a realizar serán los siguientes
+Por lo tanto, y resumiendo, los análisis a realizar serán los siguientes:
 
 * Contrastes hipótesis:
   * Contraste proporciones Esp-Ita, Esp-Port, Esp-ALe
@@ -165,7 +165,7 @@ Nuestro dataset evolucionará con respecto al de la primera práctica. Tendremos
 
 El dataset de la primera práctica tendrá la evolución temporal de 5 datos relativos al covid por países. Guardamos los datos relativos a **contagiados, casos activos, recuperados, muertes y tests realizados**. Es decir para cada uno de los países en los que haya casos registrados, guardamos un dato al día (de manera automática) cada uno de los datos recién enumerados. Al final, reflejamos la serie temporal de cada uno de esos datos por países. Por lo tanto, resultado de la anterior práctica, tenemos **5 csv**: la variación temporal de cada tipo de dato por país (ver Figura \ref{alternativas_csv}).
 
-![Representación gráfica \label{alternativas_csv}](./img/alternativas.png)
+![Representación gráfica \label{alternativas_csv}](./PRA2-Analysis/img/alternativas.png)
 
 Por otro lado, tendremos para cada país la proporción de contagiados y fallecidos el \textcolor{red}{día 30 después de contabilizar 100 muertes}, acompañado del número total de la población, densidad de población, continente, porcentaje de población mayor, etc.
 
@@ -263,7 +263,7 @@ Como hemos comentado necesitamos dos datasets: El cubo de series temporales y el
 Leemos metadatos del país.
 ```{r}
 
-continente_ingresos <- read.csv(file="..\\csv\\WorldBankData\\Metadata_Country.csv")
+continente_ingresos <- read.csv(file="..\\..\\csv\\WorldBankData\\Metadata_Country.csv")
 
 continente_ingresos <- continente_ingresos %>% select("ï..Country.Code", 
                                                       TableName, 
@@ -275,7 +275,7 @@ head(continente_ingresos)
 
 Leemos serie de porcentaje de mayores y nos quedamos con el ultimo año con datos
 ```{r}
-porcentaje_mayores <- read.csv(file="..\\csv\\WorldBankData\\UP65_Percentage.csv", 
+porcentaje_mayores <- read.csv(file="..\\..\\csv\\WorldBankData\\UP65_Percentage.csv", 
                                                           sep = ",")
 porcentaje_mayores <- porcentaje_mayores %>% select(Country.Code, 
                                                     "ï..Country.Name", X2018)
@@ -305,11 +305,11 @@ También limpiaremos valores Na de indice de paises (borrado de filas) y de los 
 
 Primero leemos los datos de las series temporales, que les necesitaremos para calcular el día 40 depúes de 100 muertes de cada país. Limpiamos países nulos y valores Nan.
 ```{r}
-total_casos <- read.csv(file="..\\csv\\covid_19_series\\TotalCases_covid19_timeserie.csv", 
+total_casos <- read.csv(file="..\\..\\csv\\covid_19_series\\TotalCases_covid19_timeserie.csv", 
                                                           sep = ",")
-total_muertes <- read.csv(file="..\\csv\\covid_19_series\\TotalDeaths_covid19_timeserie.csv", 
+total_muertes <- read.csv(file="..\\..\\csv\\covid_19_series\\TotalDeaths_covid19_timeserie.csv", 
                                                           sep = ",")
-total_tests <- read.csv(file="..\\csv\\covid_19_series\\TotalTests_covid19_timeserie.csv", 
+total_tests <- read.csv(file="..\\..\\csv\\covid_19_series\\TotalTests_covid19_timeserie.csv", 
                                                           sep = ",")
 #Quitamos indices de paises vacios
 total_casos <- total_casos[!is.na(total_casos$Country),]
@@ -455,7 +455,7 @@ Con esto hemos acabado el segundo paso, el del cálculo de cada país de los con
 
 Leemos el archivo de datos de población
 ```{r}
-poblacion <- read.csv(file="..\\csv\\world_population_2020.csv")
+poblacion <- read.csv(file="..\\..\\csv\\world_population_2020.csv")
 poblacion <- poblacion %>% rename(Country="Country..or.dependency.",
                                   Poblacion="Population..2020.",
                                   Densidad="Density..P.KmÂ².") 
@@ -516,7 +516,7 @@ head(country_covid_and_metadata)
 **En este momento ya hemos integrado todas las diferentes fuentes de datos para hacer nuestro dataset estático de datos de países**.
 El resumen del *pipeline* de integración y transformación es el comentado a principio de esta sección. Sin embargo, añadiremos una imagen ilustrativa del mismo concretamente la figura \ref{fig:pasosetl}.
 
-![Pasos de la integración y selección \label{fig:pasosetl}](./img/pasosetl.png)
+![Pasos de la integración y selección \label{fig:pasosetl}](./PRA2-Analysys/img/pasosetl.png)
 
 \newpage
 
@@ -643,7 +643,7 @@ country_covid_and_metadata$Tests[country_covid_and_metadata$Pais=='China']<-roun
 
 Guardamos nuestro dataset en un csv. Mostramos el resultado de la tabla en el Cuadro \ref{tab:tabladatos}
 ```{r tabladatos}
-write.csv(country_covid_and_metadata, "..\\csv\\country_40dc_metadata.csv", row.names=FALSE)
+write.csv(country_covid_and_metadata, "..\\..\\csv\\country_40dc_metadata.csv", row.names=FALSE)
 
 head(country_covid_and_metadata) %>% kable(caption="Head de Dataset Final") %>% 
   kable_styling(latex_options="scale_down")
