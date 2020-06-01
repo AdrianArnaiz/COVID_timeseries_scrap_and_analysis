@@ -667,11 +667,23 @@ ds_40dc <- read.csv(file="..\\..\\csv\\country_40dc_metadata.csv")
 
 ### Contraste proporciones Esp-Ita, Esp-Port, Esp-Ale
 
+Con el objetivo de conocer si España ha tenido la misma proporción de fallecidos que Italia, Alemania o Portugal, realizaremos un contraste de hipótesis de España con cada uno de estos países. Para ello, realizaremos un proceso de **contraste sobre la diferencia de proporciones**. Cada país se considera como una muestra inbdependiente de tamaño $n$ (tamaño de la población). La muestra proviene de una distribución de Bernouilli de parametro p (posibilidad de contagiarse, que para nosotros es la proporción de contagiados). Queremos comparar los parámetros poblacionales $p1$ y $p2$ a partir de las muestras para decidir si podemos considerar estos iguales o no.
+
 $p1:$ Proporción de contagios en España
 $p2:$ Proporción de contagios en Italia/Portugal/Alemania
 
-$H_{0}:$    $p_1=p_2$
-$H_{1}:$    $p_1 \neq p_2$
+$H_{0}:$    $p_1=p_2$ Misma proporción
+$H_{1}:$    $p_1 \neq p_2$ Proporción diferente
+Utilizaremos nivel de significancia $\alpha=0.05$
+
+Los pasos que seguiremos son:
+* Calcular las proporciones.
+* Calcular el estadístico de contraste
+
+$$\hat{p} = \frac{n_1p_1+n_2p_2}{n_1+n_2}=\frac{x_1+x_2}{n_1+n_2}$$
+$$z=\frac{p_1-p_2}{\sqrt{\hat{p}(1-\hat{p})(n_1^{-1}+n_2^{-1})}}$$
+
+* Calculamos el p-valor
 
 ```{r}
 # ESPAÑA-ITALIA
@@ -679,8 +691,8 @@ x1 <- ds_40dc[ds_40dc$Pais=="Spain", "CasosDia40DC"]
 n1 <- ds_40dc[ds_40dc$Pais=="Spain", "Poblacion"]
 x2 <- ds_40dc[ds_40dc$Pais=="Italy", "CasosDia40DC"]
 n2 <- ds_40dc[ds_40dc$Pais=="Italy", "Poblacion"]
-p1 = x1/n1
-p2 = x2/n2
+(p1 = x1/n1)
+(p2 = x2/n2)
 p = (x1+x2)/(n1+n2)
 sp = sqrt(p*(1-p)*(1/n1+1/n2))
 z = (p1-p2)/sp
@@ -691,8 +703,8 @@ pnorm(z, lower.tail=FALSE)
 # ESPAÑA-PORTUGAL
 x2 <- ds_40dc[ds_40dc$Pais=="Portugal", "CasosDia40DC"]
 n2 <- ds_40dc[ds_40dc$Pais=="Portugal", "Poblacion"]
-p1 = x1/n1
-p2 = x2/n2
+(p1 = x1/n1)
+(p2 = x2/n2)
 p = (x1+x2)/(n1+n2)
 sp = sqrt(p*(1-p)*(1/n1+1/n2))
 z = (p1-p2)/sp
@@ -703,13 +715,14 @@ pnorm(z, lower.tail=FALSE)
 # ESPAÑA-ALEMANIA
 x2 <- ds_40dc[ds_40dc$Pais=="Germany", "CasosDia40DC"]
 n2 <- ds_40dc[ds_40dc$Pais=="Germany", "Poblacion"]
-p1 = x1/n1
-p2 = x2/n2
+(p1 = x1/n1)
+(p2 = x2/n2)
 p = (x1+x2)/(n1+n2)
 sp = sqrt(p*(1-p)*(1/n1+1/n2))
 z = (p1-p2)/sp
 pnorm(z, lower.tail=FALSE)
 ```
+
 
 ### Contraste ANOVA entre continentes
 
@@ -729,22 +742,32 @@ l=6 #número de grupos
 qf(0.05, l-1, n-l, lower.tail = F) #valor crítico
 ```
 
-El valor 3.831 se encuentra por encima del valor crítico 2.44 por lo que rechazamos hipótesis nula.
+El valor 3.831 se encuentra por encima del valor crítico 2.44 por lo que rechazamos hipótesis nula, no todos los continentes tienen la misma proporción de fallecidos.
 
 ## Correlaciones
 
 ### Correlación entre proporcion de tests y proporcion de contagiados.
 
+Para ver la correlación entre la proporción de tests que se hacen y la porporción de contagiados aplicaremos la correlación se Spearman. Esto es debido a que este metodo mide la correlación en cuestión de si una magnitud crece con otra, pero no necesariamente de forma lineal (puede crecrer exponencialmente, logarítmica, etc). Pearson tiene el problema de que si una variable no crece de manera estrictamente lineal puede dar valores bajos.
+
+
 ```{r}
 tests <- ds_40dc$Tests/ds_40dc$Poblacion
 contagiados <- ds_40dc$CasosDia40DC/ds_40dc$Poblacion
-cor(tests, contagiados, method = c("pearson", "kendall", "spearman"))
+cor(tests, contagiados, method = "spearman")
+```
+
+Mostramos un gráfico para visualizar los datos:
+
+```{r}
+ggplot(as.data.frame(cbind(tests,contagiados)),aes(x=tests, y=contagiados)) + 
+  geom_point()
 ```
 
 ### Correlación entre variación de indice y numero de casos-O-fallecidos.
 
 ```{r}
-cor(x, y, method = c("pearson", "kendall", "spearman"))
+#cor(x, y, method = c("pearson", "kendall", "spearman"))
 ```
 
 ## Regresiones
@@ -752,6 +775,10 @@ cor(x, y, method = c("pearson", "kendall", "spearman"))
 ### Time Series Forecasting: ARIMA
 
 ### Proporción a x días ~ densidad + %gente mayor + etc
+
+Pearson sí se puede aplicar pero hay que ser cuidadoso porque las series están autocorreladas dado un orden. Tienes aquí un fulano que lo cuenta bastante bien yo creo
+
+## Clustering
 
 
 # Agradecimientos
