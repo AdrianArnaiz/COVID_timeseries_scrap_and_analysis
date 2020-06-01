@@ -39,51 +39,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 **Link a Zenodo**: https://zenodo.org/record/3748050#.XpD5w8gzZ9A
 
-# Importación de librerías
-
-```{r loadlib, echo=T, results='hide', message=F, warning=F}
-
-library(dplyr)
-library(ggplot2)
-library(knitr)
-library(kableExtra)
-```
 
 \newpage
-
-# To do's
-\textcolor{red}{To Do's} 
-
-* Seguir pasos marcados en el enunciado
-* Explicar bien que vamos a hacer y porque (todo el rollo de las Series temporales, autocorrelaciones)
-* Crear el dataset, o los diferentes datasets según los análisis.
-  * Sacar población, densidad (o extendion), [continente](https://www.bcn.cat/estadistica/castella/dades/inf/pobest/pobest16/part1/nt112.htm) y Marsh political risk index.
-    * Mirar en eurostat. INSEE, Institut national de la statistique et des études économiques. Espérance de vie, 2013. 
-    * Otra fuente [aqui](https://www.antares-consulting.com/uploads/TPublicaciones/c4fd32193a4984233b4c860cfbbd7c31f6eb1ce2.pdf)
-* Explicar bien el dataset
-* Limpiar dataset (nulos, no creo que tenga sentido normalizar. De todas maneras podemos explicar que depende del análisis se normalizará o no. Así hacemos al principiosólo eliminación de nulos y en cada analisis decidimos si se normaliza o no)
-  * Comprobar normalidad y homogeneidad de varianza: también cuando toque.
-  
-  
-* Realizar cada analisis:
-  * Contrastes hipótesis:
-    * Contraste proporciones Esp-Ita, Esp-Port, Esp-ALe
-    * Contraste anova entre continentes
-  * Correlaciones:
-    * Correlación entre proporcion de tests y proporcion de contagiados.
-    * Correlacion entre variación de indice y numero de casos-O-fallecidos.
-  * Regresión:
-    * Time Series Forecasting: ARIMA
-    * Proporción a x días ~ densidad + %gente mayor + etc
-
 
 # Introducción
 
 ## Contexto
-En el contexto de obtención del dataset explicado en la anterior práctica, nos gustaría realizar un análisis de varios aspectos de la pandemia por **Covid-19**. En este contexto es importante analizar con rigor diferentes aspectos de la pandemia, para dar lugar a conclusiones basadas en esos análisis. 
+En el contexto de obtención del dataset explicado en la anterior práctica, nos gustaría realizar un análisis de varios aspectos de la pandemia por **Covid-19**. En este contexto es importante analizar con rigor diferentes aspectos de la pandemia, para dar lugar a conclusiones basadas en esos análisis.
 
 ## Análisis de datos sobre el COVID \label{sec:analisis}
-\textcolor{red}{To Do} 
+
 Primero de todo, nos gustaría explicar la **complicación de las series temporales a la hora de realizar diferentes contrastes de hipótesis, correlaciones o predicciones**. 
 
 ### Contrastes de hipótesis
@@ -92,47 +57,36 @@ Se quiere realizar contrastes de hipótesis sobre la diferencia de afectación e
 
   * La primera complicación es que las *series temporales son muestras con gran autocorrelación en sus datos*, en la que cada observación es muy dependiente de las observaciones temporales anteriores, tienen un orden. Esto rompe el principio de independencia entre observaciones necesario para realizar la mayoría de los análisis estadísticos. Otro problema son los datos a comparar. Es decir, normalmente tenemos una muestra de datos asumiendo en primer lugar independencia (y después normalidad, además de que si lo comparamos con otra muestra también suponemos igualdad de varianzas), por ejemplo, una muestra de pesos y alturas de bebés. No podemos tratar nuestra serie temporal como una muestra de pesos, ya que en nuestra serie temporal las observaciones a lo largo del tiempo no son independientes. Por ello, no podemos realizar un típico contraste de hipótesis, tenemos que buscar otro enfoque.
 
-  * Por otro lado, **para hacer un contraste de hipótesis se comparan distribuciones**. Si comparamos un dato de un dia concreto en el tiempo para dos países, son dos puntos individuales, que no tendrán varianza. Esto **lo resolvemos realizando contrastes de hipótesis sobre la proporción** \textcolor{red}{Citar modulo estadistica}. Consideramos el contagio o no como una variable que proviene de una distribución de Bernoulli con posibilidad de contagio $p$ y posibilidad de no contagiarse de $1-p$. Por ello compararemos las proporciones de contagio de dos países.
+  * Por otro lado, **para hacer un contraste de hipótesis se comparan distribuciones**. Si comparamos un dato de un dia concreto en el tiempo para dos países, son dos puntos individuales, que no tendrán varianza. Esto **lo resolvemos realizando contrastes de hipótesis sobre la proporción** [@contraste]. Consideramos el contagio o no como una variable que proviene de una distribución de Bernoulli con posibilidad de contagio $p$ y posibilidad de no contagiarse de $1-p$. Por ello compararemos las proporciones de contagio de dos países.
 
-  * Cuando tomamos el dato de proporción de contagiados en un país, (i.e., si queremos hacer el contraste que acabamos de explicar para analizar si la proporción de contagiados en España e Italia se puede considerar igual o es diferente), no podemos considerar la serie temporal como la muestra y hacer la media, por que no tendría sentido (no tiene sentido realizar la media de una serie temporal para ver la proporción de afectados). **Deberemos elegir un punto en el tiempo** para ver la proporción de contagios ese día. Es **muy importante que para hacer un análisis justo, no debemos elegir el mismo día para los dos países**. Deberemos elegir un dñia para cada país de tal modo que esa proporción muestre la misma estapa dentro de la pandemia, es decir, **debemos tener en cuenta cuando llegó el COVID a cada país**. Por ello utilizaremos la estrategia que utilizan diferentes analisa, como por ejempo el New York Times, se elegira el \textcolor{red}{Día 30 después de contabilizar 100 muertes}. 
+  * Cuando tomamos el dato de proporción de contagiados en un país, (i.e., si queremos hacer el contraste que acabamos de explicar para analizar si la proporción de contagiados en España e Italia se puede considerar igual o es diferente), no podemos considerar la serie temporal como la muestra y hacer la media, por que no tendría sentido (no tiene sentido realizar la media de una serie temporal para ver la proporción de afectados). **Deberemos elegir un punto en el tiempo** para ver la proporción de contagios ese día. Es **muy importante que para hacer un análisis justo, no debemos elegir el mismo día para los dos países**. Deberemos elegir un dñia para cada país de tal modo que esa proporción muestre la misma estapa dentro de la pandemia, es decir, **debemos tener en cuenta cuando llegó el COVID a cada país**. Por ello utilizaremos la estrategia que utilizan diferentes analisa, como por ejempo el New York Times, se elegira el **Día 40 después de contabilizar 100 muertes**. 
   
-  * Para ver la afectación por continentes, consideraremos diferentes muestras de los diferentes continentes. Cada continente tendra $n$ proporciones, 1 de cada país que lo componga. Recordamos que la proporción de cada país ha sido obtenida como la proporción de contagiados el \textcolor{red}{Día 40 después de contabilizar 100 muertes}. De este modo, **de cada continente tendremos una media de proporciones con una desviación, lo que nos permitirá relizar un análisis ANOVA**.
+  * Para ver la afectación por continentes, consideraremos diferentes muestras de los diferentes continentes. Cada continente tendra $n$ proporciones, 1 de cada país que lo componga. Recordamos que la proporción de cada país ha sido obtenida como la proporción de contagiados el día 40 después de contabilizar 100 muertes. De este modo, **de cada continente tendremos una media de proporciones con una desviación, lo que nos permitirá relizar un análisis ANOVA**.
   
 ### Correlaciones
 
-\textcolor{red}{REPASAR, XQ PEARSON SÍ QUE SE PUEDE} 
+Como hemos comentado, una de las principales características que tienen las series temporales, sobre todo estas series derivadas de fenómenos epidemiológicos, es el alto grado de autocorrelación interna de sus datos que anula la hipótesis de independencia en las observaciones. Cuando nosotros realizamos contrastes de hipótesis o análisis de correlación (i.e. Pearson o Spearman), suponemos independencia en los datos, que no se cumple en las  series temporales. Por ejemplo, no es lo mismo analizar la correlación entre peso y altura de bebés (cada altura es independiente a las demás) que entre la serie temporal de casos de COVID y de índices económicos (los casos de COVID de un día son muy dependientes de los de ayer, autocorrelación).
 
-https://stats.stackexchange.com/questions/133155/how-to-use-pearson-correlation-correctly-with-time-series
+Los datos de series de tiempo generalmente dependen del tiempo. La correlación de Pearson, sin embargo, es apropiada para datos independientes. Este problema es similar a la llamada regresión espuria [@spurius]. Es probable que el coeficiente sea muy significativo, pero esto solo proviene de la tendencia temporal de los datos que afecta a ambas series.Es por ello que el uso del coeficiente de correlación de (Pearson o Spearman) probablemente dará resultados engañosos para la interpretación de la estructura de dependencia entre series temporales [@yule1926we]. Es decir, esto puede dar como resultado que la asociación aparente es una mera ilusión causada por la dependencia dentro de la serie.
 
-Como hemos comentado, una de las principales características que tienen las series temporales, sobre todo estas series derivadas de fenómenos epidemiológicos, es el alto grado de autocorrelación interna de sus datos que anula la hipótesis de independencia en las observaciones. Cuando nosotros realizamos contrastes de hipótesis o análisis de correlación (Pearson o Spearman), suponemos independencia en los datos, que no se cumple en las  series temporales. Por ejemplo, no es lo mismo analizar la correlación entre peso y altura de bebés (cada altura es independiente a las demás) que entre la serie temporal de casos de COVID y de índices económicos (los casos de COVID de un día son muy dependientes de los de ayer, autocorrelación).
+Para poder hacer una correlación objetivca entre ambas series se debería hacer una correlación cruzada entre diferentes lags, habiendo eliminado anteriormente. Entonces, para usar esta correlación, en lugar de suavizar la serie, en realidad es más común (porque es significativo) observar la dependencia entre los residuos [@agiakloglouspurious].
 
-Por ello, utilizaremos datos 'estáticos'. Es decir, datos de un instante de tiempo para los diferentes países. Utilizzaremos la misma estrategia que venimos comentando, elegir la proporción de casos del país el textcolor{red}{día 40 después de contabilizar 100 muertes}.
+Como entendemos que esto está fuera del alcance actual, utilizaremos datos 'estáticos'. Es decir, datos de un instante de tiempo para los diferentes países, so series temporales. Utilizaremos la misma estrategia que venimos comentando, elegir la **proporción de casos del país el día 40 después de contabilizar 100 muertes**.
 
 Con ello, ya podremos realizar las siguientes correlaciones:
 
   * Correlación entre proporción de contagiados (día 40 DC) y proporción de test realizados (dia 40 DC)
   * Correlación entre proporción de contagiados (día 40 DC) y variación de los índices económicos.
-
-Nuestro objetivo es realizar análisis de los siguientes puntos:
+  
 
 ### Regresión
-La predicción de las series temporales del covid es quizá el tema más candente, y está poniendo en vista las grandes dificultades en la predicción de evolución de fenómenos epidemiológicos. Los principales problemas que ocurren en modelos epidemiológicos es que siguen un modelo exponencial. El fenómeno de contagio se basa en sofisticaciones del modelo SIR (con base en exponenciales). En el paper de José Cuesta https://arxiv.org/pdf/2004.08842.pdf \textcolor{red}{CITAR} se llega a la conclusión de que estos modelos tienen mucha incertidumbre derivada de los parámetros elegidos, lo que da lugar a muchos escenarios diferentes. Tantos escenarios de confianza diferentes y sus intervalos de confianza, hace que no sea predecible de manera óptima los fenómenos epidemiológicos, dando innumerables escenarios sólo a 4 días vista.
+La predicción de las series temporales del covid es quizá el tema más candente, y está poniendo en vista las grandes dificultades en la predicción de evolución de fenómenos epidemiológicos. Los principales problemas que ocurren en modelos epidemiológicos es que siguen un modelo exponencial. El fenómeno de contagio se basa en sofisticaciones del modelo SIR (con base en exponenciales). En el \textcolor{blue}{\href{https://arxiv.org/pdf/2004.08842.pdf}{paper de José Cuesta}} [@castro2020predictability] se llega a la conclusión de que estos modelos tienen mucha incertidumbre derivada de los parámetros elegidos, lo que da lugar a muchos escenarios diferentes. Tantos escenarios de confianza diferentes y sus intervalos de confianza, hace que no sea predecible de manera óptima los fenómenos epidemiológicos, dando innumerables escenarios sólo a 4 días vista.
 
 Esta complejidad y dificultad hace que para nosotros intentar estimar el número de casos sea una tarea muy difícil. 
 
 Sin embargo, con objetivo de aplicar algún modelo de *Time Series Forecasting* aplicaremos modelos de predicción utilizados en otras investigaciones, como el modelo autoregresivo ARIMA, y así ver cómo estima el modelo.
 
-* [ejemplo](https://rviews.rstudio.com/2020/03/05/covid-19-epidemiologywith-r/)
-* https://www.medrxiv.org/content/10.1101/2020.04.18.20070631v1.full.p
-df
-* https://www.medrxiv.org/content/10.1101/2020.03.30.20047803v1.full.p
-df
-* [+ejemplos](https://cran.rproject.org/web/packages/covid19.analytics/vignettes/covid19.analytics.h
-tml)
-* [COVID-19: ARIMA based time-series analysis to forecastnear
-future](https://arxiv.org/ftp/arxiv/papers/2004/2004.07859.pdf)
-
-Por otro lado, intentaremos explicar la proporción de muertes basandonos en características sociodemográficas del país. Es decir, **intentaremos explicar la variable objetivo proporción de fallecidos a través de las variables explicativas densidad de población, porcentaje de mayores o Marsh Political Risk Index**.
+Por otro lado, intentaremos explicar la proporción de muertes basandonos en características sociodemográficas del país. Es decir, **intentaremos explicar la variable objetivo proporción de fallecidos a través de las diferentes variables explicativas densidad de población, porcentaje de mayores, riqueza del país, etc.**.
 
 
 ### Análisis que realizaremos
@@ -152,7 +106,6 @@ Por lo tanto, y resumiendo, los análisis a realizar serán los siguientes:
 Como es de entender, no podemos realizar estos análisis solo con los datos de la primera práctica (cubo de dato país fecha). En el siguiente apartado, describiremos los dos diferentes dataset que utilizaremos con el objetivo de realizar estos análisis.
 
 
-
 ## Descripción del dataset
 
 ### Descripción breve general del dataset
@@ -167,7 +120,7 @@ El dataset de la primera práctica tendrá la evolución temporal de 5 datos rel
 
 ![Representación gráfica \label{alternativas_csv}](./img/alternativas.png)
 
-Por otro lado, tendremos para cada país la proporción de contagiados y fallecidos el \textcolor{red}{día 40 después de contabilizar 100 muertes}, acompañado del número total de la población, densidad de población, continente, porcentaje de población mayor, etc.
+Por otro lado, tendremos un **dataset para cada país la proporción de contagiados y fallecidos el día 40 después de contabilizar 100 muertes, acompañado del número total de la población, densidad de población, continente, porcentaje de población mayor, etc**. Es decir, con datos estáticos, de un instante en el tiempo, no series temporales.
 
 
 ### Dataset final
@@ -180,45 +133,39 @@ Tendremos **dos datasets**, cada uno de ellos usado para un diferente tipo de an
   * Lo explicamos más extensamente en la sección \ref{sec:analisis}. Contiene los datos de un país de manera estática, es decir: los datos de contagiados o fallecidos el día x después de las 100 muertes, datos de densidad, población, vejez de la población del país, nivel de ingresos, etc.
   
   
-| País       | Continente | Contag dia 40 DC | Fallec dia 40 DC | tests dia 40 DC | Densidad  total | Población  | \%vejez | Nivel Ingresos ONU  |
+| País       | Continente | Contag dia 40 DC | Fallec dia 40 DC | tests dia 40 DC | Densidad  total | Población  | %vejez | Nivel Ingresos ONU  |
 |------------|------------|-----------------|-----------------|-------------------|-----------|-----------|---------|---------------------|
 | España     | Eu | n | n | n | n | n | n | st | n |
 | Italia     | Eu | n | n | n | n | n | n | st | n |
 | Zambique   | Af | n | n | n | n | n | n | st | n |
 
-## Fuentes
-Link a Worldometers - COVID-19
 
-* Link a Worldometers - COVID-19: https://www.worldometers.info/coronavirus.
-* Fuente población
-* Fuente extension o densidad de poblacion
-* Continente
-* Nivel de ingresos del país
-  
+\newpage
 
 ## Cómo se ha recogido y fuentes
 
 ### Cubo de datos Dato-Pais-Fecha
-Se detalló en la anterior práctica la recogida de datos del cubo Dato-Pais-Fecha. Hicimos scrapping sobre la página de [Worldometers-Coronavirus](https://www.worldometers.info/coronavirus), en el script alojado en el directorio `src\Scraping_covid19.py`. En esa página tenemos **una tabla** que muestra los **valores de los datos (contagiados, activos, etc) por país en el momento actual**. Es decir, las **filas los países y las columnas los datos del momento actual**. Nuestro enfoque ha sido **automatizar el lanzamiento del scraping** para que se ejecute una vez al día y se vayan **actualizando automáticamente los csv de las series temporales de los datos por país**. Por ello, la primera fecha de la que tenemos datos es del 30/03, que fue el primer día que teníamos desarrollado el scraping y lo lanzamos. La herramienta **Travis** ha sido utilizada para automatizar el lanzamiento del script y el *autodeploy* a *Github* (*Travis* permite que, en su plataforma, una vez al día y de forma planificada y automática se ejecute el scrapping, se actualizan las tablas de datos y se haga un commit automático para actualizar los datos en el github).
+Se detalló en la anterior práctica la recogida de datos del cubo Dato-Pais-Fecha. Hicimos scrapping sobre la página de [Worldometers-Coronavirus](https://www.worldometers.info/coronavirus), en el script alojado en el directorio *src-Scraping_covid19.py*. En esa página tenemos **una tabla** que muestra los **valores de los datos (contagiados, activos, etc) por país en el momento actual**. Es decir, las **filas los países y las columnas los datos del momento actual**. Nuestro enfoque ha sido **automatizar el lanzamiento del scraping** para que se ejecute una vez al día y se vayan **actualizando automáticamente los csv de las series temporales de los datos por país**. Por ello, la primera fecha de la que tenemos datos es del 30-03, que fue el primer día que teníamos desarrollado el scraping y lo lanzamos. La herramienta **Travis** ha sido utilizada para automatizar el lanzamiento del script y el *autodeploy* a *Github* (*Travis* permite que, en su plataforma, una vez al día y de forma planificada y automática se ejecute el scrapping, se actualizan las tablas de datos y se haga un commit automático para actualizar los datos en el github).
 
-* Link a (Worldometers - COVID-19)[https://www.worldometers.info/coronavirus]: https://www.worldometers.info/coronavirus.
+* Link a (Worldometers - COVID-19)[https://www.worldometers.info/coronavirus].
 
 ### Población y densidad de población
-\textcolor{red}{To Do} 
-También de worldometers.
+
+Ha sido realizado para esta segunda práctica:
+
+* Se ha recogido mediante un scrapping en la ruta */src/scrap_population.py* a la página worldometers.
+* Link a (Worldometers - Population)[https://www.worldometers.info/world-population/population-by-country/]: https://www.worldometers.info/world-population/population-by-country/.
+* **Fichero final**: */csv/world_population_2020.csv*
 
 ### Continente, pocentaje mayores de 65 y nivel de ingresos del pais
-\textcolor{red}{To Do} 
 
-\textcolor{red}{To Do}
-https://data.worldbank.org/indicator/SP.POP.65UP.TO.ZS?end=2018&start=2017
+Ha sido realizado para esta segunda práctica:
 
-csvs de datos y metadatos bajados de world bank. Son 2 ficheros csv que leeremos y les haremos join para tener los datos del país.
-
-
-En el mismo csv que arriba, en los metadatos.
-
-
+* Se ha utilizado la API de **WORLDBANK** para descargar metadatos de los países del último año. Tras descargar los datos tenemos dos ficheros csv. Uno con datos del % de mayores de 65 años de cada país, y otro para metadatos de contienente, nivel de ingresos...
+* Link a [WorldBank](https://data.worldbank.org/indicator/SP.POP.65UP.TO.ZS?end=2018&start=2017): https://data.worldbank.org/indicator/SP.POP.65UP.TO.ZS?end=2018&start=2017
+* Como resultado tenemos dos ficheros:
+  * *csv/WorldBankData/Metadata_Country.csv*
+  * *csv/WorldBankData/UP65_Percentage.csv*
 
 \newpage
 
@@ -228,13 +175,13 @@ Como se ha comentado necesitamos dos datasets: El cubo de series temporales y el
 
 1. Leer los dos CSV de **World Bank** (nuevos en esta práctica) para sacar los datos de continente, nivel de ingresos y porcentaje de población mayor de 65 años de cada país. Haremos un Join de ambos y nos quedaremos con los datos que queremos. Tendremos este $DF_1$.
 
-| País       | Continente |  \%vejez | Nivel Ingresos ONU  |
+| País       | Continente |  %vejez | Nivel Ingresos ONU  |
 |------------|------------|---------|----------------------|
 | España     | Eu | n | st | n |
 | Italia     | Eu | n | st | n |
 | Zambique   | Af | n | st | n |
 
-2. Leer csv de series temporales de **Worldometers** (*cubo* de la primera práctica): leeremos 3 csv del *cubo* relativos a las series temporales de contagios, fallecidos y tests. Sacamos el dato estático de cada país. Es decir, calculamos para cada país su día \textcolor{red}{40 despues de llegar la pandemia (100 muertes)} y obtenemos los datos de contagiados, fallecidos y tests ese día. Tendremos este $DF_2$.
+2. Leer csv de series temporales de **Worldometers** (*cubo* de la primera práctica): leeremos 3 csv del *cubo* relativos a las series temporales de contagios, fallecidos y tests. Sacamos el dato estático de cada país. Es decir, calculamos para cada país su día **40 despues de llegar la pandemia (100 muertes)** y obtenemos los datos de contagiados, fallecidos y tests ese día. Tendremos este $DF_2$.
 
 | País       | Contagiados dia 40 DC | Fallecidos dia 40 DC | tests/1M dia 40 DC |
 |------------|----------------------|---------------------|-------------------|
@@ -252,11 +199,22 @@ Como se ha comentado necesitamos dos datasets: El cubo de series temporales y el
 
 4. Hacemos join del dataset resultante de Worldometers y el de worldbank. Join de $DF_1$ y $DF_2$.
 
-| País       | Continente | Contag dia 40 DC | Fallec dia 40 DC | tests/1M dia 40 DC | Densidad  | Población | \%vejez | Nivel Ingresos ONU  |
+| País       | Continente | Contag dia 40 DC | Fallec dia 40 DC | tests/1M dia 40 DC | Densidad  | Población | %vejez | Nivel Ingresos ONU  |
 |------------|------------|------------------|------------------|-------------------|-----------|-----------|---------|---------------------|
 | España     | Eu | n | n | n | n | n | n | st | n |
 | Italia     | Eu | n | n | n | n | n | n | st | n |
 | Zambique   | Af | n | n | n | n | n | n | st | n |
+
+
+Antes de empezar importaremos las librerías necesarias:
+
+```{r loadlib, echo=T, results='hide', message=F, warning=F}
+
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+```
 
 ## Paso 1 - Leer WorldBank y hacer Join
 
@@ -754,8 +712,12 @@ Para ver la correlación entre la proporción de tests que se hacen y la porporc
 ```{r}
 tests <- ds_40dc$Tests/ds_40dc$Poblacion
 contagiados <- ds_40dc$CasosDia40DC/ds_40dc$Poblacion
-cor(tests, contagiados, method = "spearman")
+sptest <- cor.test(tests, contagiados, method = "spearman")
+sptest$estimate
+sptest$p.value
 ```
+
+Contra más proporción de tests se realizan, más  proporción de casos detectamos. Hay una correlación de Spearman del 0.72 con un p-valor estadísticametne significativo.
 
 Mostramos un gráfico para visualizar los datos:
 
@@ -773,15 +735,29 @@ ggplot(as.data.frame(cbind(tests,contagiados)),aes(x=tests, y=contagiados)) +
 ## Regresiones
 
 ### Time Series Forecasting: ARIMA
+\textcolor{red}{Todo}
+
+* [ejemplo](https://rviews.rstudio.com/2020/03/05/covid-19-epidemiologywith-r/)
+* https://www.medrxiv.org/content/10.1101/2020.04.18.20070631v1.full.p
+df
+* https://www.medrxiv.org/content/10.1101/2020.03.30.20047803v1.full.p
+df
+* [+ejemplos](https://cran.rproject.org/web/packages/covid19.analytics/vignettes/covid19.analytics.h
+tml)
+* [COVID-19: ARIMA based time-series analysis to forecastear
+future](https://arxiv.org/ftp/arxiv/papers/2004/2004.07859.pdf)
+
 
 ### Proporción a x días ~ densidad + %gente mayor + etc
 
-Pearson sí se puede aplicar pero hay que ser cuidadoso porque las series están autocorreladas dado un orden. Tienes aquí un fulano que lo cuenta bastante bien yo creo
+\textcolor{red}{Todo}
 
 ## Clustering
 
+\textcolor{red}{Todo}
 
 # Agradecimientos
+
 \textcolor{red}{Todo}
 * Principalmente, agradecer a la asociación *Worldometers* [@worldo], asociación de estadísticas mundiales en tiempo real, por tener los datos actualizados de manera tan rápida y en abierto. 
 * Después, tanto a los estudios de la *Johns Hopkins University* [@jhu], como a la asociación *Our world in Data* de la *Oxford University* [@roser2020coronavirus], por sus trabajos que nos han permitido descubrir fuentes da calidad.
@@ -791,9 +767,6 @@ Pearson sí se puede aplicar pero hay que ser cuidadoso porque las series están
 # Inspiración
 \textcolor{red}{ToDo}
 Hablar de J. Arenas y demás.
-
-
-
 
 # Código fuente y dataset en Zenodo
 \textcolor{red}{ToDo}
