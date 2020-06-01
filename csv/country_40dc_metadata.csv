@@ -3,10 +3,10 @@
 "Argentina",12628,467,136662,45195774,17,"Latin America & Caribbean","Upper middle income",11.1177888760774
 "Austria",15997,624,344606,9006398,109,"Europe & Central Asia","High income",19.0015664595899
 "Belgium",50509,8016,474176,11589623,383,"Europe & Central Asia","High income",18.7887437383395
-"Brazil",169594,11653,735224,212559417,25,"Latin America & Caribbean","Upper middle income",8.92283783244003
+"Brazil",126611,8588,339552,212559417,25,"Latin America & Caribbean","Upper middle income",8.92283783244003
 "Canada",71157,5169,1169380,37742154,4,"North America","High income",17.2320066788651
 "Chile",77961,806,514523,19116201,26,"Latin America & Caribbean","High income",11.5298016568816
-"China",82827,4632,918275,1439323776,153,"East Asia & Pacific","Upper middle income",10.9208835350654
+"China",82827,4632,909028,1439323776,153,"East Asia & Pacific","Upper middle income",10.9208835350654
 "Colombia",21981,750,271118,50882891,46,"Latin America & Caribbean","Upper middle income",8.47804701986958
 "Czech Republic (Czechia)",8721,304,387127,10708981,139,"Europe & Central Asia","High income",19.4208768932343
 "Denmark",10591,527,357986,5792202,137,"Europe & Central Asia","High income",19.8129526369902
@@ -18,7 +18,7 @@
 "Greece",2882,172,160991,10423054,81,"Europe & Central Asia","High income",21.6552720778435
 "Hungary",3771,499,169960,9660351,107,"Europe & Central Asia","High income",19.1577253832321
 "India",74925,2436,1947041,1380004385,464,"South Asia","Lower middle income",6.17995564947149
-"Indonesia",14749,1007,169195,273523615,151,"East Asia & Pacific","Lower middle income",5.85716561272863
+"Indonesia",12776,930,134151,273523615,151,"East Asia & Pacific","Lower middle income",5.85716561272863
 "Iran",90481,5710,432329,83992949,52,"Middle East & North Africa","Upper middle income",6.18457380562499
 "Ireland",23242,1488,258808,4937786,72,"Europe & Central Asia","High income",13.8658017012923
 "Israel",16720,280,545761,8655535,400,"Middle East & North Africa","High income",11.9769860249625
@@ -33,15 +33,15 @@
 "Peru",88541,2523,650613,32971854,26,"Latin America & Caribbean","Upper middle income",8.08839279183076
 "Philippines",11618,772,188649,109581078,368,"East Asia & Pacific","Lower middle income",5.12256876829946
 "Poland",17469,869,554357,37846611,124,"Europe & Central Asia","High income",17.5178167625452
-"Portugal",27679,1144,566172,10196709,111,"Europe & Central Asia","High income",21.9538575375873
+"Portugal",26182,1089,485925,10196709,111,"Europe & Central Asia","High income",21.9538575375873
 "Romania",16002,1016,286217,19237691,84,"Europe & Central Asia","Upper middle income",18.3387013938296
 "Russia",344481,3541,8945384,145934462,9,"Europe & Central Asia","Upper middle income",14.6747083203719
 "Serbia",11227,239,229485,8737371,100,"Europe & Central Asia","Upper middle income",18.3457926916963
-"South Korea",10936,258,695920,51269185,527,"East Asia & Pacific","High income",14.4185558323969
+"South Korea",10810,256,654863,51269185,527,"East Asia & Pacific","High income",14.4185558323969
 "Spain",195944,20639,930230,46754778,94,"Europe & Central Asia","High income",19.3785075224995
-"Sweden",26670,3256,177500,10099265,25,"Europe & Central Asia","High income",20.0955249278002
+"Sweden",23918,2941,148500,10099265,25,"Europe & Central Asia","High income",20.0955249278002
 "Switzerland",30009,1795,290365,8654622,219,"Europe & Central Asia","High income",18.6232165647717
-"Turkey",139771,3841,1440671,84339067,110,"Europe & Central Asia","Upper middle income",8.4832129399716
+"Turkey",131744,3584,1265119,84339067,110,"Europe & Central Asia","Upper middle income",8.4832129399716
 "Ukraine",21584,644,312532,43733762,75,"Europe & Central Asia","Lower middle income",16.4346864392016
 "United Kingdom",171253,26771,1023824,67886011,281,"Europe & Central Asia","High income",18.3958656741466
 "United States",1010507,56803,5919847,331002651,36,"North America","High income",15.8076540556035

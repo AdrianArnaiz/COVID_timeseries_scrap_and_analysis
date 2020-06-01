@@ -80,7 +80,7 @@ library(kableExtra)
 # Introducción
 
 ## Contexto
-En el contexto de obtención del dataset explicado en la anterior práctica, nos gustaría realizar un análisis de varios aspectos de la pandemia por **Covid-19**. En este contexto es importante analizar con rigor diferentes aspectos de la pandemia, para dar lugar a consluiones basaddas en esos análisis. 
+En el contexto de obtención del dataset explicado en la anterior práctica, nos gustaría realizar un análisis de varios aspectos de la pandemia por **Covid-19**. En este contexto es importante analizar con rigor diferentes aspectos de la pandemia, para dar lugar a conclusiones basadas en esos análisis. 
 
 ## Análisis de datos sobre el COVID \label{sec:analisis}
 \textcolor{red}{To Do} 
@@ -88,15 +88,15 @@ Primero de todo, nos gustaría explicar la **complicación de las series tempora
 
 ### Contrastes de hipótesis
 
-Nos gustaría realizar contrastes de hipótesis sobre la diferencia de afectación entre países o continentes. 
+Se quiere realizar contrastes de hipótesis sobre la diferencia de afectación entre países o continentes. 
 
   * La primera complicación es que las *series temporales son muestras con gran autocorrelación en sus datos*, en la que cada observación es muy dependiente de las observaciones temporales anteriores, tienen un orden. Esto rompe el principio de independencia entre observaciones necesario para realizar la mayoría de los análisis estadísticos. Otro problema son los datos a comparar. Es decir, normalmente tenemos una muestra de datos asumiendo en primer lugar independencia (y después normalidad, además de que si lo comparamos con otra muestra también suponemos igualdad de varianzas), por ejemplo, una muestra de pesos y alturas de bebés. No podemos tratar nuestra serie temporal como una muestra de pesos, ya que en nuestra serie temporal las observaciones a lo largo del tiempo no son independientes. Por ello, no podemos realizar un típico contraste de hipótesis, tenemos que buscar otro enfoque.
 
-  * Por otro lado, **para hacer un contraste de hipótesis se comparan distribuciones**. Si comparamos un dato de un dia concreto en el tiempo para dos países, son dos puntos individuales, que no tendrán varianza. Esto **lo resolvemos realizando contrastes de hipótesis sobre la proporción** \textcolor{red}{Citar modulo estadistica}. Consideramos el contagio o no como una variable que proviene de una distribución de Bernouilli con posibilidad de contagio $p$ y posibilidad de no contagiarse de $1-p$. Por ello compararemos las proporciones de contagio de dos países.
+  * Por otro lado, **para hacer un contraste de hipótesis se comparan distribuciones**. Si comparamos un dato de un dia concreto en el tiempo para dos países, son dos puntos individuales, que no tendrán varianza. Esto **lo resolvemos realizando contrastes de hipótesis sobre la proporción** \textcolor{red}{Citar modulo estadistica}. Consideramos el contagio o no como una variable que proviene de una distribución de Bernoulli con posibilidad de contagio $p$ y posibilidad de no contagiarse de $1-p$. Por ello compararemos las proporciones de contagio de dos países.
 
-  * Cuando tomamos el dato de proporción de contagiados en un país, (i.e., si queremos hacer el contraste que acabamos de explicar para analizar si la proporción de contagiados en España e Italia se puede considerar igual o es diferente), no podemos considerar la serie temporal como la muestra y hacer la media, por que no tendría sentido (no tiene sentido relaizar la media de una serie temporal para ver la proporción de afectados). **Deberemos elegir un punto en el tiempo** para ver la proporción de contagios ese día. Es **muy importante que para hacer un análisis justo, no debemos elegir el mismo día para los dos países**. Deberemos elegir un dñia para cada país de tal modo que esa proporción muestre la misma estapa dentro de la pandemia, es decir, **debemos tener en cuenta cuando llegó el COVID a cada país**. Por ello utilizaremos la estrategia que utilizan diferentes analisa, como por ejempo el New York Times, se elegira el \textcolor{red}{Día 30 después de contabilizar 100 muertes}. 
+  * Cuando tomamos el dato de proporción de contagiados en un país, (i.e., si queremos hacer el contraste que acabamos de explicar para analizar si la proporción de contagiados en España e Italia se puede considerar igual o es diferente), no podemos considerar la serie temporal como la muestra y hacer la media, por que no tendría sentido (no tiene sentido realizar la media de una serie temporal para ver la proporción de afectados). **Deberemos elegir un punto en el tiempo** para ver la proporción de contagios ese día. Es **muy importante que para hacer un análisis justo, no debemos elegir el mismo día para los dos países**. Deberemos elegir un dñia para cada país de tal modo que esa proporción muestre la misma estapa dentro de la pandemia, es decir, **debemos tener en cuenta cuando llegó el COVID a cada país**. Por ello utilizaremos la estrategia que utilizan diferentes analisa, como por ejempo el New York Times, se elegira el \textcolor{red}{Día 30 después de contabilizar 100 muertes}. 
   
-  * Para ver la afectación por continentes, consideraremos diferentes muestras de los diferentes continentes. Cada continente tendra $n$ proporciones, 1 de cada país que lo componga. Recordamos que la proporción de cada país ha sido obtenida como la proporción de contagiados el \textcolor{red}{Día 30 después de contabilizar 100 muertes}. De este modo, **de cada continente tendremos una media de proporciones con una desviación, lo que nos permitirá relizar un análisis ANOVA**.
+  * Para ver la afectación por continentes, consideraremos diferentes muestras de los diferentes continentes. Cada continente tendra $n$ proporciones, 1 de cada país que lo componga. Recordamos que la proporción de cada país ha sido obtenida como la proporción de contagiados el \textcolor{red}{Día 40 después de contabilizar 100 muertes}. De este modo, **de cada continente tendremos una media de proporciones con una desviación, lo que nos permitirá relizar un análisis ANOVA**.
   
 ### Correlaciones
 
@@ -106,12 +106,12 @@ https://stats.stackexchange.com/questions/133155/how-to-use-pearson-correlation-
 
 Como hemos comentado, una de las principales características que tienen las series temporales, sobre todo estas series derivadas de fenómenos epidemiológicos, es el alto grado de autocorrelación interna de sus datos que anula la hipótesis de independencia en las observaciones. Cuando nosotros realizamos contrastes de hipótesis o análisis de correlación (Pearson o Spearman), suponemos independencia en los datos, que no se cumple en las  series temporales. Por ejemplo, no es lo mismo analizar la correlación entre peso y altura de bebés (cada altura es independiente a las demás) que entre la serie temporal de casos de COVID y de índices económicos (los casos de COVID de un día son muy dependientes de los de ayer, autocorrelación).
 
-Por ello, utilizaremos datos 'estáticos'. Es decir, datos de un instante de tiempo para los diferentes países. Utilizzaremos la misma estrategia que venimos comentando, elegir la proporción de casos del país el textcolor{red}{día 30 después de contabilizar 100 muertes}.
+Por ello, utilizaremos datos 'estáticos'. Es decir, datos de un instante de tiempo para los diferentes países. Utilizzaremos la misma estrategia que venimos comentando, elegir la proporción de casos del país el textcolor{red}{día 40 después de contabilizar 100 muertes}.
 
 Con ello, ya podremos realizar las siguientes correlaciones:
 
-  * Correlación entre proporción de contagiados (día 30 DC) y proporción de test realizados (dia 30 DC)
-  * Correlación entre proporción de contagiados (día 30 DC) y variación de los índices económicos.
+  * Correlación entre proporción de contagiados (día 40 DC) y proporción de test realizados (dia 40 DC)
+  * Correlación entre proporción de contagiados (día 40 DC) y variación de los índices económicos.
 
 Nuestro objetivo es realizar análisis de los siguientes puntos:
 
@@ -132,7 +132,7 @@ tml)
 * [COVID-19: ARIMA based time-series analysis to forecastnear
 future](https://arxiv.org/ftp/arxiv/papers/2004/2004.07859.pdf)
 
-Por otro lado, intentaremos explicar la proporción de muertes basandonos en características sociodemográficas del país. Es decir, **intentaremos explicar la variable objetivo proporción de fallecidos a travñes de las variables explicativas densidad de población, porcentaje de mayores o Marsh Political Risk Index**.
+Por otro lado, intentaremos explicar la proporción de muertes basandonos en características sociodemográficas del país. Es decir, **intentaremos explicar la variable objetivo proporción de fallecidos a través de las variables explicativas densidad de población, porcentaje de mayores o Marsh Political Risk Index**.
 
 
 ### Análisis que realizaremos
@@ -140,16 +140,16 @@ Por otro lado, intentaremos explicar la proporción de muertes basandonos en car
 Por lo tanto, y resumiendo, los análisis a realizar serán los siguientes:
 
 * Contrastes hipótesis:
-  * Contraste proporciones Esp-Ita, Esp-Port, Esp-ALe
+  * Contraste proporciones Esp-Ita, Esp-Port, Esp-Ale
   * Contraste anova entre continentes
 * Correlaciones:
-  * Correlación entre proporcion de tests y proporcion de contagiados.
-  * Correlacion entre variación de indice y numero de casos-O-fallecidos.
+  * Correlación entre proporción de tests y proporción de contagiados.
+  * Correlación entre variación de indice y numero de casos-O-fallecidos.
 * Regresión:
   * Time Series Forecasting: ARIMA
   * Proporción a x días ~ densidad + %gente mayor  + etc
 
-Como es de entender, no podemos realiar estos análsisis solo con los datos de la primera práctica (cubo de dato país fecha). En el siguiente apartado, describiremos los dos diferentes dataser que utilizaremos con el objetivo de realizar estos análisis.
+Como es de entender, no podemos realizar estos análisis solo con los datos de la primera práctica (cubo de dato país fecha). En el siguiente apartado, describiremos los dos diferentes dataset que utilizaremos con el objetivo de realizar estos análisis.
 
 
 
@@ -165,9 +165,9 @@ Nuestro dataset evolucionará con respecto al de la primera práctica. Tendremos
 
 El dataset de la primera práctica tendrá la evolución temporal de 5 datos relativos al covid por países. Guardamos los datos relativos a **contagiados, casos activos, recuperados, muertes y tests realizados**. Es decir para cada uno de los países en los que haya casos registrados, guardamos un dato al día (de manera automática) cada uno de los datos recién enumerados. Al final, reflejamos la serie temporal de cada uno de esos datos por países. Por lo tanto, resultado de la anterior práctica, tenemos **5 csv**: la variación temporal de cada tipo de dato por país (ver Figura \ref{alternativas_csv}).
 
-![Representación gráfica \label{alternativas_csv}](./PRA2-Analysis/img/alternativas.png)
+![Representación gráfica \label{alternativas_csv}](./img/alternativas.png)
 
-Por otro lado, tendremos para cada país la proporción de contagiados y fallecidos el \textcolor{red}{día 30 después de contabilizar 100 muertes}, acompañado del número total de la población, densidad de población, continente, porcentaje de población mayor, etc.
+Por otro lado, tendremos para cada país la proporción de contagiados y fallecidos el \textcolor{red}{día 40 después de contabilizar 100 muertes}, acompañado del número total de la población, densidad de población, continente, porcentaje de población mayor, etc.
 
 
 ### Dataset final
@@ -224,7 +224,7 @@ En el mismo csv que arriba, en los metadatos.
 
 # Integración y selección de datos \label{sec:integracion}
 
-Como hemos comentado necesitamos dos datasets: El cubo de series temporales y el dataset de datos estáticos. El cubo de series temporales ya le tenemos realizado. Para **integrar los datos de diferentes origenes al dataset de datos estáticos realizaremos los siguientes pasos**:
+Como se ha comentado necesitamos dos datasets: El cubo de series temporales y el dataset de datos estáticos. El cubo de series temporales ya lo tenemos realizado. Para **integrar los datos de diferentes origenes al dataset de datos estáticos realizaremos los siguientes pasos**:
 
 1. Leer los dos CSV de **World Bank** (nuevos en esta práctica) para sacar los datos de continente, nivel de ingresos y porcentaje de población mayor de 65 años de cada país. Haremos un Join de ambos y nos quedaremos con los datos que queremos. Tendremos este $DF_1$.
 
@@ -234,7 +234,7 @@ Como hemos comentado necesitamos dos datasets: El cubo de series temporales y el
 | Italia     | Eu | n | st | n |
 | Zambique   | Af | n | st | n |
 
-2. Leer csv de series temporales de **Worldometers** (*cubo* de la primera práctica): leeremos 3 csv del *cubo* relativos a las series temporales de de contagios, fallecidos y tests. Sacamos el dato estático de cada país. Es decir, calculamos para cada país su día \textcolor{red}{40 despues de llegar la pandemia} y obtenemos los datos de contagiados, fallecidos y tests ese día. Tendremos este $DF_2$.
+2. Leer csv de series temporales de **Worldometers** (*cubo* de la primera práctica): leeremos 3 csv del *cubo* relativos a las series temporales de contagios, fallecidos y tests. Sacamos el dato estático de cada país. Es decir, calculamos para cada país su día \textcolor{red}{40 despues de llegar la pandemia (100 muertes)} y obtenemos los datos de contagiados, fallecidos y tests ese día. Tendremos este $DF_2$.
 
 | País       | Contagiados dia 40 DC | Fallecidos dia 40 DC | tests/1M dia 40 DC |
 |------------|----------------------|---------------------|-------------------|
@@ -242,7 +242,7 @@ Como hemos comentado necesitamos dos datasets: El cubo de series temporales y el
 | Italia | n | n | n |
 | Zambique | n | n | n |
 
-3. Leemos el csv de la población **Worldometers** (nuevo en esta práctica): cruzamos los datos de contagiados y fallecidos con población para poder sacar proporciones cuando se necesiten. Tendremos este $DF_2$.
+3. Leemos el csv de la población y densidad de cada país de **Worldometers** (nuevo en esta práctica): cruzamos los datos del **paso 2** con la población para poder sacar proporciones cuando se necesiten. Tendremos este ampliado $DF_2$.
 
 | País       | Contag dia 40 DC | Fallec dia 40 DC | tests/1M dia 40 DC | Población | Densidad |
 |------------|------------------|---------------------|-------------------|-----------|----------|
@@ -301,9 +301,9 @@ head(country_incomes_elderly_continent)
 
 ## Paso 2 - Leer series temporales del dataset cubo y calcular proporcion dia 40 Despues de 100 muertes para cada pais
 
-También limpiaremos valores Na de indice de paises (borrado de filas) y de los valores de los días. Si hay indice del país, que haya una casilla vacia (NaN significa que el número es 0, casilla vacía de la tabla de Worldometers).
+También limpiaremos valores Na de indice de países (borrado de filas) y de los valores de los días. Si hay indice del país, que haya una casilla vacía (NaN significa que el número es 0, casilla vacía de la tabla de Worldometers).
 
-Primero leemos los datos de las series temporales, que les necesitaremos para calcular el día 40 depúes de 100 muertes de cada país. Limpiamos países nulos y valores Nan.
+Primero leemos los datos de las series temporales, que les necesitaremos para calcular el día 40 despúes de 100 muertes de cada país. Limpiamos países nulos y valores Nan.
 ```{r}
 total_casos <- read.csv(file="..\\..\\csv\\covid_19_series\\TotalCases_covid19_timeserie.csv", 
                                                           sep = ",")
@@ -311,47 +311,47 @@ total_muertes <- read.csv(file="..\\..\\csv\\covid_19_series\\TotalDeaths_covid1
                                                           sep = ",")
 total_tests <- read.csv(file="..\\..\\csv\\covid_19_series\\TotalTests_covid19_timeserie.csv", 
                                                           sep = ",")
-#Quitamos indices de paises vacios
+# Quitamos índices de países vacíos
 total_casos <- total_casos[!is.na(total_casos$Country),]
 total_muertes <- total_muertes[!is.na(total_muertes$Country),]
 total_tests <- total_tests[!is.na(total_tests$Country),]
 
-#Quitamos datos de el mundo
+# Quitamos datos del mundo
 total_casos <- total_casos[!total_casos$Country=='World',]
 total_muertes <- total_muertes[!total_muertes$Country=='World',]
 total_tests <- total_tests[!total_tests$Country=='World',]
 
-#Limpiamos los casos donde hay Nan en la medida: será 0.
+# Limpiamos los casos donde hay Nan en la medida: será 0.
 total_casos[is.na(total_casos)] <- 0
 total_muertes[is.na(total_muertes)] <- 0
 total_tests[is.na(total_tests)] <- 0
 
-#Mostramos ejemplos de unas pocas columnas y unas pocas filas
+# Mostramos ejemplos de unas pocas columnas y unas pocas filas
 head(total_muertes[,1:3])
 ```
 
 
-Como hemos comentado, tenemos que obtener el dato del día 20 desde el día para el que cada país haya superado las 100 muertes, con el objetivo de comparar de forma objetiva diferentes países: misma fase de la pandemia. **Por ello para cada país buscaremos el día en el que se superan esas muertes. Realmente, para cada país, obtendremos el índice de la columna donde se pasan por primera vez los 100 fallecidos**, con el objetivo de sumarle después los 30 días y obtener nuestro dato de **día 30 después del Covid** para cada país.
+Como hemos comentado, queremos obtener los datos a día 40 transcurrido desde la notificación de 100 muertes por COVID en cada país, con el objetivo de comparar de forma objetiva diferentes países: misma fase de la pandemia. **Por ello para cada país buscaremos el día en el que se superan 100 muertes. Realmente, para cada país, obtendremos el índice de la columna donde se pasan por primera vez los 100 fallecidos**, con el objetivo de sumarle después los 40 días y obtener nuestro dato de **día 40 después del Covid** para cada país.
 
- * Existe un problema. Nuestro primer scrapping de la primera práctica fue el dia 30/03, y en ese día ya había varios países que superaban con creces los 100 fallecidos. Nos guataría utilizar nuestros datos y no buscar nuevos (i.e. del Jhon Hopkins University) para realizar una práctica solucionando los problemas del propio dataset. **Por ello, debemos estimar hace cuantos días se llegó a las 100 muertes**. Se estima que las muertes se doblan cada dos días. Es decir $fallecidos=(dias/2)^2 \rightarrow dias=\sqrt{fallecidos/4}$. Como queremos estimar el día de las 100 muertes **aplicaremos un suavizado a la función** sacando el 4 de la raiz: $dias_{100}=\sqrt{fallecidos}/4$. Por ello, si vemos que en el primer dia del scrapping tenemos ya mas de 200 muertes, calculamos el índice el negativo, para que después al sumarle 30 a esa fecha, nos de una columna de nuestro dataset y correspondiente al día 30 Después del Covid.
+ * Existe un problema. Nuestro primer scrapping de la primera práctica fue el dia 30/03, y en ese día ya había varios países que superaban con creces los 100 fallecidos. Nos gustaría utilizar nuestros datos y no buscar nuevos (i.e. del Jhon Hopkins University) para realizar una práctica solucionando los problemas del propio dataset. **Por ello, debemos estimar hace cuantos días se llegó a las 100 muertes**. Se estima que las muertes se doblan cada dos días. Es decir $fallecidos=(dias/2)^2 \rightarrow dias=\sqrt{fallecidos/4}$. Como queremos estimar el día de las 100 muertes **aplicaremos un suavizado a la función** sacando el 4 de la raiz: $dias_{100}=\sqrt{fallecidos}/4$. Por ello, si vemos que en el primer día del scrapping tenemos ya mas de 100 muertes, calculamos el índice en negativo, para que después al sumarle 40 a esa fecha, nos de una columna de nuestro dataset y correspondiente al día 40 Después del Covid.
  
- Estimación vs real en algunos ejemplos (el día es el día de Marzo donde se superaron las 100 muertes):
+ Estimación vs real en algunos ejemplos ("Día" se refiere al día de Marzo donde se superaron las 100 muertes):
  
 | **Pais**   |      **Estimacion**          | **Real** |
 |------------|------------------------------|----------|
-| Italia     | $30-(sqrt(10779)/4)=$ Día 4  | día 4    |
-| España     | $30-(sqrt(6803)/4)=$ Día 9   | día 13   |
-| Francia    | $30-(sqrt(2500)/4)=$ Día 17  | día 16   |
-| UK         | $30-(sqrt(1228)/4)=$ Día 21  | día 19   |
-| Alemania   | $30-(sqrt(771)/4)=$ Día 23   | día 24   |
-| Belgica    | $30-(sqrt(431)/4)=$ Día 24   | día 25   |
+| Italia     | $30-(sqrt(10779)/4)=$ Día 4  | Día 4    |
+| España     | $30-(sqrt(6803)/4)=$ Día 9   | Día 13   |
+| Francia    | $30-(sqrt(2500)/4)=$ Día 17  | Día 16   |
+| UK         | $30-(sqrt(1228)/4)=$ Día 21  | Día 19   |
+| Alemania   | $30-(sqrt(771)/4)=$ Día 23   | Día 24   |
+| Belgica    | $30-(sqrt(431)/4)=$ Día 24   | Día 25   |
 
 
 
  
 ```{r}
 index_100<-function(row){
-  #Inicializamos los datos del pais, sera c(nombre, idColumna20diasDC)
+  #Inicializamos los datos del pais, sera c(nombre, idColumna40diasDC)
   res <- c(row[1], NaN)
   #Vemos el numero de columnas que hay: numero de dias+nombrepais
   ncols <- length(names(row))
@@ -362,7 +362,7 @@ index_100<-function(row){
     #Si superan nuestro umbral de 100 establecemos el resultado, BREAK del loop y return
     #Es decir, el primer valor que pase de 100 romperá el bucle
     if(fallec>100){
-      if((idxCol==2)&(fallec>200)){
+      if((idxCol==2)&(fallec>100)){
         #Si ya en la primera columna hay mas de 100, estimamos los dias
         res<-c(row[1], -round((sqrt(fallec)/4))+40)
       }else{
@@ -377,7 +377,7 @@ index_100<-function(row){
 
 ```
 
-Aplicamos nuestra funcion para obtener un **dataset con el nombre de cada país y el índice de la columna del día 20 después del Covid** (tomando como día de llegada el día que se superan las 100 muertes).
+Aplicamos nuestra funcion para obtener un **dataset con el nombre de cada país y el índice de la columna del día 40 después del Covid** (tomando como día de llegada el día que se superan las 100 muertes).
 ```{r}
 #Aplicamos la funcion a cada linea del df, a cada pais
 death_100 <- apply(total_muertes, 1, FUN=index_100)
@@ -516,7 +516,7 @@ head(country_covid_and_metadata)
 **En este momento ya hemos integrado todas las diferentes fuentes de datos para hacer nuestro dataset estático de datos de países**.
 El resumen del *pipeline* de integración y transformación es el comentado a principio de esta sección. Sin embargo, añadiremos una imagen ilustrativa del mismo concretamente la figura \ref{fig:pasosetl}.
 
-![Pasos de la integración y selección \label{fig:pasosetl}](./PRA2-Analysys/img/pasosetl.png)
+![Pasos de la integración y selección \label{fig:pasosetl}](./img/pasosetl.png)
 
 \newpage
 
@@ -657,6 +657,101 @@ head(country_covid_and_metadata) %>% kable(caption="Head de Dataset Final") %>%
 
 # Analisis de datos
 \textcolor{red}{Recordar hacer analisis de normalidad y varianza cuando toque}
+Importamos el dataset nuevo
+
+```{r}
+ds_40dc <- read.csv(file="..\\..\\csv\\country_40dc_metadata.csv")
+```
+
+## Contrastes hipótesis
+
+### Contraste proporciones Esp-Ita, Esp-Port, Esp-Ale
+
+$p1:$ Proporción de contagios en España
+$p2:$ Proporción de contagios en Italia/Portugal/Alemania
+
+$H_{0}:$    $p_1=p_2$
+$H_{1}:$    $p_1 \neq p_2$
+
+```{r}
+# ESPAÑA-ITALIA
+x1 <- ds_40dc[ds_40dc$Pais=="Spain", "CasosDia40DC"]
+n1 <- ds_40dc[ds_40dc$Pais=="Spain", "Poblacion"]
+x2 <- ds_40dc[ds_40dc$Pais=="Italy", "CasosDia40DC"]
+n2 <- ds_40dc[ds_40dc$Pais=="Italy", "Poblacion"]
+p1 = x1/n1
+p2 = x2/n2
+p = (x1+x2)/(n1+n2)
+sp = sqrt(p*(1-p)*(1/n1+1/n2))
+z = (p1-p2)/sp
+pnorm(z, lower.tail=FALSE)
+```
+
+```{r}
+# ESPAÑA-PORTUGAL
+x2 <- ds_40dc[ds_40dc$Pais=="Portugal", "CasosDia40DC"]
+n2 <- ds_40dc[ds_40dc$Pais=="Portugal", "Poblacion"]
+p1 = x1/n1
+p2 = x2/n2
+p = (x1+x2)/(n1+n2)
+sp = sqrt(p*(1-p)*(1/n1+1/n2))
+z = (p1-p2)/sp
+pnorm(z, lower.tail=FALSE)
+```
+
+```{r}
+# ESPAÑA-ALEMANIA
+x2 <- ds_40dc[ds_40dc$Pais=="Germany", "CasosDia40DC"]
+n2 <- ds_40dc[ds_40dc$Pais=="Germany", "Poblacion"]
+p1 = x1/n1
+p2 = x2/n2
+p = (x1+x2)/(n1+n2)
+sp = sqrt(p*(1-p)*(1/n1+1/n2))
+z = (p1-p2)/sp
+pnorm(z, lower.tail=FALSE)
+```
+
+### Contraste ANOVA entre continentes
+
+```{r}
+proporciones <- ds_40dc$CasosDia40DC/ds_40dc$Poblacion
+continentes <- ds_40dc$Continent
+
+boxplot(proporciones ~ continentes, 
+        col = c("yellow", "blue", "grey","green", "pink", "orange"), 
+        ylab = "Proporción de población contagiada")
+
+anova = aov(lm(proporciones ~ continentes))
+summary(anova)
+
+n=nrow(ds_40dc) #número de instancias
+l=6 #número de grupos
+qf(0.05, l-1, n-l, lower.tail = F) #valor crítico
+```
+
+El valor 3.831 se encuentra por encima del valor crítico 2.44 por lo que rechazamos hipótesis nula.
+
+## Correlaciones
+
+### Correlación entre proporcion de tests y proporcion de contagiados.
+
+```{r}
+tests <- ds_40dc$Tests/ds_40dc$Poblacion
+contagiados <- ds_40dc$CasosDia40DC/ds_40dc$Poblacion
+cor(tests, contagiados, method = c("pearson", "kendall", "spearman"))
+```
+
+### Correlación entre variación de indice y numero de casos-O-fallecidos.
+
+```{r}
+cor(x, y, method = c("pearson", "kendall", "spearman"))
+```
+
+## Regresiones
+
+### Time Series Forecasting: ARIMA
+
+### Proporción a x días ~ densidad + %gente mayor + etc
 
 
 # Agradecimientos
