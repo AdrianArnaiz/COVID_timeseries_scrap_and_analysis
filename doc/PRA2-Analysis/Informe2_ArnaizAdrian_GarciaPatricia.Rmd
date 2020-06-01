@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 \hfill
 
-^[Bibliogrfía al final del documento]
+^[Bibliografía al final del documento]
 
 \newpage
 
@@ -223,38 +223,38 @@ library(forecast)
 Leemos metadatos del país.
 ```{r}
 
-continente_ingresos <- read.csv(file="..\\..\\csv\\WorldBankData\\Metadata_Country.csv")
+continente_ingresos <- read.csv(file="..//..//csv//WorldBankData//Metadata_Country.csv", 
+                                header=T, fileEncoding="UTF-8-BOM")
 
-continente_ingresos <- continente_ingresos %>% select("ï..Country.Code", 
+continente_ingresos <- continente_ingresos %>% select(Country.Code, 
                                                       TableName, 
                                                       Region, 
                                                       IncomeGroup )
-
 head(continente_ingresos)
 ```
 
 Leemos serie de porcentaje de mayores y nos quedamos con el ultimo año con datos
 ```{r}
-porcentaje_mayores <- read.csv(file="..\\..\\csv\\WorldBankData\\UP65_Percentage.csv", 
-                                                          sep = ",")
+porcentaje_mayores <- read.csv(file="..//..//csv//WorldBankData//UP65_Percentage.csv",
+                               header=T, fileEncoding="UTF-8-BOM")
+
 porcentaje_mayores <- porcentaje_mayores %>% select(Country.Code, 
-                                                    "ï..Country.Name", X2018)
+                                                    Country.Name, X2018)
 head(porcentaje_mayores)
 ```
 
 Hacemos join entre ambos dataframes para tener los datos de porcentaje de vejez y metadatos
 ```{r}
 country_incomes_elderly_continent <-merge(porcentaje_mayores, continente_ingresos, 
-                                          by.x="Country.Code", by.y="ï..Country.Code")
+                                          by.x="Country.Code", by.y="Country.Code")
 country_incomes_elderly_continent <- country_incomes_elderly_continent %>% 
                                                     select(Country.Code,
-                                                    "ï..Country.Name", 
+                                                    Country.Name, 
                                                     Region, IncomeGroup, 
                                                     X2018)
 
 country_incomes_elderly_continent <- country_incomes_elderly_continent %>% 
                                                     rename(Continent=Region,
-                                                           Country.Name="ï..Country.Name",
                                                            UpTo65=X2018)
 head(country_incomes_elderly_continent)
 ```
@@ -265,12 +265,13 @@ También limpiaremos valores Na de indice de países (borrado de filas) y de los
 
 Primero leemos los datos de las series temporales, que les necesitaremos para calcular el día 40 despúes de 100 muertes de cada país. Limpiamos países nulos y valores Nan.
 ```{r}
-total_casos <- read.csv(file="..\\..\\csv\\covid_19_series\\TotalCases_covid19_timeserie.csv", 
-                                                          sep = ",")
-total_muertes <- read.csv(file="..\\..\\csv\\covid_19_series\\TotalDeaths_covid19_timeserie.csv", 
-                                                          sep = ",")
-total_tests <- read.csv(file="..\\..\\csv\\covid_19_series\\TotalTests_covid19_timeserie.csv", 
-                                                          sep = ",")
+total_casos <- read.csv(file="..//..//csv//covid_19_series//TotalCases_covid19_timeserie.csv",
+                        header=T, fileEncoding="UTF-8-BOM")
+total_muertes <- read.csv(file="..//..//csv//covid_19_series//TotalDeaths_covid19_timeserie.csv",
+                          header=T, fileEncoding="UTF-8-BOM")
+total_tests <- read.csv(file="..//..//csv//covid_19_series//TotalTests_covid19_timeserie.csv", 
+                        header=T, fileEncoding="UTF-8-BOM")
+
 # Quitamos índices de países vacíos
 total_casos <- total_casos[!is.na(total_casos$Country),]
 total_muertes <- total_muertes[!is.na(total_muertes$Country),]
@@ -415,10 +416,11 @@ Con esto hemos acabado el segundo paso, el del cálculo de cada país de los con
 
 Leemos el archivo de datos de población
 ```{r}
-poblacion <- read.csv(file="..\\..\\csv\\world_population_2020.csv")
+poblacion <- read.csv(file="..//..//csv//world_population_2020.csv",
+                      header=T, fileEncoding="UTF-8-BOM")
 poblacion <- poblacion %>% rename(Country="Country..or.dependency.",
                                   Poblacion="Population..2020.",
-                                  Densidad="Density..P.KmÂ².") 
+                                  Densidad="Density..P.Km2.") 
 head(poblacion[order(poblacion$Country),])
 ```
 
@@ -584,7 +586,7 @@ country_covid_and_metadata$Tests[country_covid_and_metadata$Tests
 En este caso vemos que China no cumple esa condición. No solo es que no cumpla la restricción, esque además los test realizados son 0. Esto significará que hay falta de datos sobre los test realizados de este país. **Imputaremos el valor basándonos en una regresión lineal de los test a través de los casos y los fallecidos.** Primero creamos el modelo:
 
 ```{r}
-model_tests <- lm(Tests∼CasosDia40DC+FallDia40DC, data=country_covid_and_metadata)
+model_tests <- lm(Tests~CasosDia40DC+FallDia40DC, data=country_covid_and_metadata)
 summary(model_tests)
 ```
 
@@ -603,7 +605,7 @@ country_covid_and_metadata$Tests[country_covid_and_metadata$Pais=='China']<-roun
 
 Guardamos nuestro dataset en un csv. Mostramos el resultado de la tabla en el Cuadro \ref{tab:tabladatos}
 ```{r tabladatos}
-write.csv(country_covid_and_metadata, "..\\..\\csv\\country_40dc_metadata.csv", row.names=FALSE)
+write.csv(country_covid_and_metadata, "..//..//csv//country_40dc_metadata.csv", row.names=FALSE)
 
 head(country_covid_and_metadata) %>% kable(caption="Head de Dataset Final") %>% 
   kable_styling(latex_options="scale_down")
@@ -620,7 +622,7 @@ head(country_covid_and_metadata) %>% kable(caption="Head de Dataset Final") %>%
 Importamos el dataset nuevo
 
 ```{r}
-ds_40dc <- read.csv(file="..\\..\\csv\\country_40dc_metadata.csv")
+ds_40dc <- read.csv(file="..//..//csv//country_40dc_metadata.csv")
 ```
 
 ## Contrastes hipótesis
