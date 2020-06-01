@@ -12,6 +12,7 @@ output:
     latex_engine: xelatex
     number_sections: yes
     toc: yes
+    toc_depth: 4
 bibliography: references.bib
 ---
 
@@ -214,6 +215,7 @@ library(dplyr)
 library(ggplot2)
 library(knitr)
 library(kableExtra)
+library(forecast)
 ```
 
 ## Paso 1 - Leer WorldBank y hacer Join
@@ -291,7 +293,7 @@ head(total_muertes[,1:3])
 
 Como hemos comentado, queremos obtener los datos a día 40 transcurrido desde la notificación de 100 muertes por COVID en cada país, con el objetivo de comparar de forma objetiva diferentes países: misma fase de la pandemia. **Por ello para cada país buscaremos el día en el que se superan 100 muertes. Realmente, para cada país, obtendremos el índice de la columna donde se pasan por primera vez los 100 fallecidos**, con el objetivo de sumarle después los 40 días y obtener nuestro dato de **día 40 después del Covid** para cada país.
 
- * Existe un problema. Nuestro primer scrapping de la primera práctica fue el dia 30/03, y en ese día ya había varios países que superaban con creces los 100 fallecidos. Nos gustaría utilizar nuestros datos y no buscar nuevos (i.e. del Jhon Hopkins University) para realizar una práctica solucionando los problemas del propio dataset. **Por ello, debemos estimar hace cuantos días se llegó a las 100 muertes**. Se estima que las muertes se doblan cada dos días. Es decir $fallecidos=(dias/2)^2 \rightarrow dias=\sqrt{fallecidos/4}$. Como queremos estimar el día de las 100 muertes **aplicaremos un suavizado a la función** sacando el 4 de la raiz: $dias_{100}=\sqrt{fallecidos}/4$. Por ello, si vemos que en el primer día del scrapping tenemos ya mas de 100 muertes, calculamos el índice en negativo, para que después al sumarle 40 a esa fecha, nos de una columna de nuestro dataset y correspondiente al día 40 Después del Covid.
+ * Existe un problema. Nuestro primer scrapping de la primera práctica fue el dia 30/03, y en ese día ya había varios países que superaban con creces los 100 fallecidos. Nos gustaría utilizar nuestros datos y no buscar nuevos (i.e. del Jhon Hopkins University) para realizar una práctica solucionando los problemas del propio dataset. **Por ello, debemos estimar hace cuantos días se llegó a las 100 muertes**. Se estima que las muertes se doblan cada dos días. Es decir $fallecidos=(dias/2)^2 \rightarrow dias=\sqrt{fallecidos/4}$. Como queremos estimar el día de las 100 muertes **aplicaremos un suavizado a la función** sacando el 4 de la raiz: $dias_{100}=\sqrt{fallecidos}/4$. Por ello, si vemos que en el primer día del scrapping tenemos ya mas de 100 muertes, calculamos el índice en negativo, para que después al sumarle 40 a esa fecha, nos de una columna de nuestro dataset y correspondiente al día 40 Después del Covid (No calculamos la proyección de casos para los que el primer dia tengan menos de 200, consideremos ese dia como el primero).
  
  Estimación vs real en algunos ejemplos ("Día" se refiere al día de Marzo donde se superaron las 100 muertes):
  
@@ -614,7 +616,7 @@ head(country_covid_and_metadata) %>% kable(caption="Head de Dataset Final") %>%
 
 
 # Analisis de datos
-\textcolor{red}{Recordar hacer analisis de normalidad y varianza cuando toque}
+
 Importamos el dataset nuevo
 
 ```{r}
@@ -627,17 +629,16 @@ ds_40dc <- read.csv(file="..\\..\\csv\\country_40dc_metadata.csv")
 
 Con el objetivo de conocer si España ha tenido la misma proporción de fallecidos que Italia, Alemania o Portugal, realizaremos un contraste de hipótesis de España con cada uno de estos países. Para ello, realizaremos un proceso de **contraste sobre la diferencia de proporciones**. Cada país se considera como una muestra inbdependiente de tamaño $n$ (tamaño de la población). La muestra proviene de una distribución de Bernouilli de parametro p (posibilidad de contagiarse, que para nosotros es la proporción de contagiados). Queremos comparar los parámetros poblacionales $p1$ y $p2$ a partir de las muestras para decidir si podemos considerar estos iguales o no.
 
-$p1:$ Proporción de contagios en España  
+$p1:$ Proporción de contagios en España
 $p2:$ Proporción de contagios en Italia/Portugal/Alemania
 
-$H_{0}:$    $p_1=p_2$ Misma proporción  
+$H_{0}:$    $p_1=p_2$ Misma proporción
 $H_{1}:$    $p_1 \neq p_2$ Proporción diferente
 
 Utilizaremos nivel de significancia $\alpha=0.05$
 
 Los pasos que seguiremos son:
-
-* Calcular las proporciones
+* Calcular las proporciones.
 * Calcular el estadístico de contraste
 
 $$\hat{p} = \frac{n_1p_1+n_2p_2}{n_1+n_2}=\frac{x_1+x_2}{n_1+n_2}$$
@@ -697,7 +698,7 @@ boxplot(proporciones ~ continentes,
         ylab = "", xlab="",
         horizontal = T,
         las=2, cex.axis=0.8)
-title(xlab="Proporción de población contagiada", line=3.5)
+        title(xlab="Proporción de población contagiada", line=3.5)
 
 anova = aov(lm(proporciones ~ continentes))
 summary(anova)
@@ -739,29 +740,175 @@ ggplot(as.data.frame(cbind(tests,contagiados)),aes(x=tests, y=contagiados)) +
 #cor(x, y, method = "spearman")
 ```
 
-## Regresiones
+\newpage
+
+## Regresion
+
 
 ### Time Series Forecasting: ARIMA
-\textcolor{red}{Todo}
 
-* [ejemplo](https://rviews.rstudio.com/2020/03/05/covid-19-epidemiologywith-r/)
-* https://www.medrxiv.org/content/10.1101/2020.04.18.20070631v1.full.p
-df
-* https://www.medrxiv.org/content/10.1101/2020.03.30.20047803v1.full.p
-df
-* [+ejemplos](https://cran.rproject.org/web/packages/covid19.analytics/vignettes/covid19.analytics.h
-tml)
-* [COVID-19: ARIMA based time-series analysis to forecastear
-future](https://arxiv.org/ftp/arxiv/papers/2004/2004.07859.pdf)
+En este apartado intentaremos **predecir los contagiados de los siguientes 20 días basándonos en los últimos 40 días**. Para ello utilizaremos los datos del cubo de series temporales. Lo realizaremos para varios paises.
+
+Como hemos comentado, las series temporales tienen la característica de tener un gran componente de autocorrelación, especialmente estas series derivads de fenómenos epidemiológicos. En este punto, los modelos que mejor estiman este tipo de datos son los modelos autoregresivos, como **ARIMA**.
+
+Como se explica en [@anne2020arima] Arima pronostica basándose en sus valores pasados anteriores. Tiene 3 parámetros distintos(p, d, q). Estos se utilizan para parametrizar los modelos ARIMA. Los tres parámetros explican la estacionalidad, la tendencia y el ruido en los conjuntos de datos que se denotan con la notación ARIMA (p, d, q). En el modelo, *p* es la parte autorregresiva del modelo e incorpora el efecto de valores pasados en el modelo. *d* es la parte integrada del modo e incorpora la cantidad de diferenciación que se aplicará a la serie temporal. El parámetro *q* es el parámetro de la media móvil que permite establecer el error del modelo propuesto como una combinación lineal de los valores de error observados en puntos de tiempo anteriores en el pasado. Estos modelos se pueden obtener basándonos en diferentes gráficas de autocorrelación, sin embargo, nosotros utilizaremos la función de R auto.arima para obtenerles automáticamente.
+
+Primero vemos las fechas de nuestro dataset que se corresponden con los ultimos 40 dias para crear la serie temporal. En R la serie temporal tiene su tipo propio, por ello sacamos la fecha para establecer los índices de la misma.
+```{r}
+names(total_muertes)[c(ncol(total_muertes)-40,ncol(total_muertes))]
+```
+
+Creamos una función que dandole el nombre del país y el número de días, nos devuelva la visualización predicha por ARIMA, con los parámetros como título y el país en el subtítulo. También mostramos una **métrica de bondad del modelo** que es **AIC**. Nuestra función también devolvera los intervalos de confianza del 80 y 90 por ciento a 4 días vista.
+```{r}
+predcit_cases <-function(pais, dias){
+  #Elegimos los 40 ultimos dias del pais del dataset original
+  cases_40_dias <- total_casos[total_muertes$Country==pais,
+                              (ncol(total_muertes)-40):ncol(total_muertes)]
+  
+  #creamos la serie temporal
+  inds <- seq(as.Date("2020-04-18"), as.Date("2020-05-28"), by = "day")
+  time_Serie <- ts(t(cases_40_dias), start = c(2020, as.numeric(format(inds[1], "%j"))),
+           frequency = 365)
+  colnames(time_Serie) <- 'Fallecidos'
+  
+  #Creamos el modelo ARIMA con la función de R
+  fit <- auto.arima(time_Serie)
+  #Predecimos los siguientes n dias
+  fore <- forecast(fit, h = dias)
+  #Mostramos la prediccion
+  plot(fore, sub=paste("Prediccion para", pais, "- AIC:", round(fit$aic,3)),
+       xlab="Días",
+      ylab="Casos totales")
+  
+  fore<- cbind(fore$lower[4,],fore$upper[4,])
+  colnames(fore) <- c("MIN 4_dias","MAX 4_dias")
+  return(fore)
+}
+```
 
 
-### Proporción a x días ~ densidad + %gente mayor + etc
+Predecimos para Brasil, país con el número de casos en la fase de gran crecimiento, viendo una clara tendencia al aumento de casos. Nuestro modelo predice un aumento de los casos practicamente en la tendencia del último día. 
+```{r}
+fore_brazil <- predcit_cases('Brazil',20)
+fore_brazil
+```
 
-\textcolor{red}{Todo}
+Podemos ver lo que comentábamos del análisis realizado en [@castro2020predictability]. El intervalo de confianza al 95% es muy grande (También el del 80), dando un escenario en el que la predicción para 4 días vista, tiene un intervalo de confianza del 95% de rango de 60000 casos para Brasil.
 
-## Clustering
+Realizaremos el mismo análisis para USA (en fase de expansión del virus), para España e Italia (fase de estabilización) y Portugal (Pocos casos).
 
-\textcolor{red}{Todo}
+**USA**. Vemos como al crecer menos exponencialmente que Brasil, el modelo predice una crecida más lenta.
+```{r}
+fore_usa <- predcit_cases('USA',20)
+fore_usa
+```
+
+**España**. Vemos como el modelo predice bien la estabilización de los contagios por el virus. Podemos darnos cuenta que dentro del intervalo de confianza están casos que significarían bajar los casos totales, lo que es totalmente imposible. Vemos también como el intervalo de confianza es mucho menor que para los paises en expansion.Además tambien nuestro AIC es menor (se deberá tanto al modelo como a la magnitud de los datos).
+```{r}
+fore_sp <-predcit_cases('Spain',20)
+fore_sp
+```
+
+**Italia**. Vemos que el modelo también predice bien la fase de estabilización. Al igual que para España, los intervalos de confianza son menores que para países en expansión, lo que no quita para que sean muy grandes como para predecir con estabilidad. El AIC es menor que para España con la misma magnitud de casos, lo que quiere decire que el modelo creado para Italia ajusta mejor.
+```{r}
+fore_it <- predcit_cases('Italy',20)
+fore_it
+```
+
+**Portugal**. Para portugal el modelo predice una crecida con más pendiente. Sin embargo, no tenemos que quitar el foco de que Portugal tiene muchos menos casos. Vemos que **la incertdumbre del intervalo de confianza podrá dar lugar a multitud de escenarios, desde la estabilización si se acerca a los límites inferiores, como a un repunte crítico si se acerca a límites superiores**.
+```{r}
+fore_pt <- predcit_cases('Portugal',20)
+fore_pt
+```
+
+\newpage
+
+
+### Regresión lineal: Proporción a 40 días ~ densidad + %gente mayor + etc
+
+Chequearemos la normalidad de nuestros datos.
+
+```{r}
+shapiro.test(ds_40dc$FallDia40DC/ds_40dc$Poblacion)
+hist(ds_40dc$FallDia40DC/ds_40dc$Poblacion, col="blue", nclass=15)
+```
+
+Vemos que nuestros datos no están normalmente distribuidos, lo que potencialmente es un gran problema para las diferentes regresiones. Destacamos que el histograma nos indica la aparición de outliers altos, pero estos son países dentro de la población de estudio, los que son importantes para el mismo, ya que nos gustaría explicar por qué se dan esos altos valores. Viendo el histograma, la **distribución de las proporciones de fallecidos sigue una distribución Power Law**. Las distribuciones power law siguen la regla del 80 20. Hay muchos países con poca proporción y pocos países con mucha.
+
+Intentaremos explicar la proporción de fallecidos a 40 días de los 100 fallecidos según las diferentes características sociodemográficas del país.
+Para ello, realizaremos una regresión lineal de la proporción con las variables regresoras:
+
+* Porcentaje de población mayor que 65 años.
+* Densidad de población.
+* Nivel de ingresos del país según la ONU.
+
+Para ello aplicaremos regresión lineal. Esta regresión tiene las siguientes asunciones sobre los datos:
+
+* Debe haber una relación lineal entre variables independientes y dependientes.
+  * Analizaremos si nuestros datos lo cumplen o no a través del análisis de los residuos del modelo.
+* No debe haber ningún valor atípico presente.
+  * Hmos mostrado que existen outliers en nuestros datos debido a la difernecia de afectación del COVID en diferentes países. Siin embargo esos valores son de la población de interés y no deben ser eliminados.
+* Sin heteroscedasticidad (diferencia de varianza).
+  * Analizaremos si nuestros datos lo cumplen o no a través del análisis de los residuos del modelo.
+* Las observaciones de muestra deben ser independientes.
+  * Suponemos que los datos de proporción de fallecidos a 40 días desde la llegda del COVID son independientes en todos los países.
+* Los términos de error deben distribuirse normalmente con media 0 y varianza constante.
+  * Analizaremos si nuestros datos lo cumplen o no a través del análisis de los residuos del modelo.
+* Ausencia de autocorrelación.
+  * Se ha explicado en el primer apartado de la práctica. Al utilizar este dataset estático no tendremos autocorrelación.
+
+
+https://www.listendata.com/2018/03/regression-analysis.html
+```{r}
+ds_40dc$proporcion_fall<- ds_40dc$FallDia40DC/ds_40dc$Poblacion
+propfall_model <- lm(proporcion_fall ~ UpTo65+Densidad+IncomeGroup, data=ds_40dc)
+summary(propfall_model)
+```
+
+Vemos como el modelo ajusta muy mal. Es decir: **la proporción de fallecidos a 40 días de la llegada del covid no se explica a través de la densidad de población, mayores de 65 años e ingresos del país**. Vemos como $R^2$ es muy bajo, además de tener un p-valor que nos indica que no es estadísticamente significativo. Lo mismo pasa para todos los coeficientes de las variables, los p-valores nos indican que no son estadísticamente significativos ($\alpha=0.05$).
+
+Analizaremos los residuos del modelo para llegar a una conclusión.
+
+**Residuos VS valores predichos**. Los residuos de los datos deben distribuirse normalmente. Es decir, Los residuos mostrados frente a los valores predichgos, no deben presentar estructura. Este gráfico muestra si los residuos tienen patrones no lineales. Podría haber una relación no lineal entre las variables predictoras y una variable de resultado y el patrón podría aparecer en este gráfico si el modelo no captura la relación no lineal (i.e. existir un relación cuadrática). En nuestro modelo vemos como los residuos no muestran parábolas, ni estructuiras sinusoidales, etc. Sin embargo, si que vemos que se distribuyen de forma bimodal, agrupados en dos nubes de puntos.
+```{r}
+plot(propfall_model, which=1, col=c("red"))  # Q-Q Plot
+```
+  
+\newpage
+
+**QQ-PLOT**. Los residuos deben estar normalmente distribuidos para considerar que el modelo está bien construido. En el QQ-plot, la línea teórica nos dice la distribución normal. Este es un gráfico para comparar una distribución con la distribución normal. Podemos ver en el siguiente gráfico como nuestros residuos no siguen la distribución normal. Claramente, nuestros residuos no siguen una distribución estrictamente normal. Hay puntos extremos a ambos lados de la distribución, lo que se puede explicar por que nuestros datos tenían claros outliers. Al mostrar una cola derecha en los residuos nos indica:
+
+* Asimetría en la distribución de los residuos.
+* Outliers en residuos derivado de outliers en datos.
+
+```{r}
+plot(propfall_model, which=2, col=c("red"))  # Q-Q Plot
+```
+  
+\newpage
+
+Vemos como nuestros residuos no siguen una distribución estrictamente normal. Para ello mostramos la gráfica de densidad y realizamos un test de normalidad. Tanto la gráfica como el test nos indican que los residuos no son normales, indicio de que el modelo lineal no es el adecuado para modelar la proporción de fallecidos a través de características demográficas. Otro tipo de modelo debería ser usado.
+
+```{r}
+#Ver la cola que veiamos en el qq (cola-bimodalidad)
+plot(density(propfall_model$residuals))
+shapiro.test(propfall_model$residuals)
+```
+  
+\newpage
+
+**Scale-Location**.
+Este gráfico muestra si los residuos se distribuyen por igual a lo largo de los rangos de predictores. Así es como puede verificar la suposición de varianza igual (homocedasticidad). Es bueno si ve una línea horizontal con puntos de dispersión iguales (al azar). En nuesrto caso podemos ver como **existe una clara heterocedasticidad**. Es decirm la varianza no es homogénea y crece según crecen los residuos.Podemos ver los residuos comienzan a extenderse más a lo largo del eje x a medida que crecen. Debido a que los residuos se extienden cada vez más, la línea roja muesrta un ángulo, mostrando que existe heterocedasticidad.
+
+```{r}
+plot(propfall_model, which=3, col=c("red"))  # Q-Q Plot
+```
+
+
+Nuestra conclusión es la siguiente: es posible que su modelo lineal no sea la mejor manera de entender nuestros datos, es decir, no somos capaces de abstraer la estructura y el porqué de la distribución. Puede ser por varias causas: una es que debamos volver a su teoría de relación entre los datos e hipótesis sobre los mismos: ¿Es realmente una relación lineal entre los predictores y el resultado? No creamos que sea así, por lo que habría que estudiar otro tipo de relaciones. Otra causa es ¿hay alguna variable importante que haya dejado fuera de su modelo? Seguramente sí, la pandemia se extiende por muchas causas, muchas no tan medibles facilmente como estas nuestras (i.e. dependerá de la distribución de las ciudades de un país, sus redes de comunicación, reuniones de personas durante el covid..). Por ello, lamentamos no poder haber explicado la proporción de fallecidos de manera lineal a través de características sociodemográficas. Nuestra conclusión es que **la proporción de fallecidos de un país no se explica de manera lineal basándonos en la densidad, porcentaje de mayores de 65 y nivel de ingresos**. 
+
+# Conclusión
+
 
 # Agradecimientos
 
@@ -770,10 +917,6 @@ future](https://arxiv.org/ftp/arxiv/papers/2004/2004.07859.pdf)
 * Después, tanto a los estudios de la *Johns Hopkins University* [@jhu], como a la asociación *Our world in Data* de la *Oxford University* [@roser2020coronavirus], por sus trabajos que nos han permitido descubrir fuentes da calidad.
 * Agradecer los recursos encontrados para realizar el scraping, tanto en [@lawson2015web] como en el módulo [@webscrapuoc], propio de la UOC.
 
-
-# Inspiración
-\textcolor{red}{ToDo}
-Hablar de J. Arenas y demás.
 
 # Código fuente y dataset en Zenodo
 \textcolor{red}{ToDo}
