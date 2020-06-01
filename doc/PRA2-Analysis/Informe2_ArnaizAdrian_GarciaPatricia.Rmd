@@ -320,7 +320,7 @@ index_100<-function(row){
     #Si superan nuestro umbral de 100 establecemos el resultado, BREAK del loop y return
     #Es decir, el primer valor que pase de 100 romperá el bucle
     if(fallec>100){
-      if((idxCol==2)&(fallec>100)){
+      if((idxCol==2)&(fallec>200)){
         #Si ya en la primera columna hay mas de 100, estimamos los dias
         res<-c(row[1], -round((sqrt(fallec)/4))+40)
       }else{
@@ -627,15 +627,17 @@ ds_40dc <- read.csv(file="..\\..\\csv\\country_40dc_metadata.csv")
 
 Con el objetivo de conocer si España ha tenido la misma proporción de fallecidos que Italia, Alemania o Portugal, realizaremos un contraste de hipótesis de España con cada uno de estos países. Para ello, realizaremos un proceso de **contraste sobre la diferencia de proporciones**. Cada país se considera como una muestra inbdependiente de tamaño $n$ (tamaño de la población). La muestra proviene de una distribución de Bernouilli de parametro p (posibilidad de contagiarse, que para nosotros es la proporción de contagiados). Queremos comparar los parámetros poblacionales $p1$ y $p2$ a partir de las muestras para decidir si podemos considerar estos iguales o no.
 
-$p1:$ Proporción de contagios en España
+$p1:$ Proporción de contagios en España  
 $p2:$ Proporción de contagios en Italia/Portugal/Alemania
 
-$H_{0}:$    $p_1=p_2$ Misma proporción
+$H_{0}:$    $p_1=p_2$ Misma proporción  
 $H_{1}:$    $p_1 \neq p_2$ Proporción diferente
+
 Utilizaremos nivel de significancia $\alpha=0.05$
 
 Los pasos que seguiremos son:
-* Calcular las proporciones.
+
+* Calcular las proporciones
 * Calcular el estadístico de contraste
 
 $$\hat{p} = \frac{n_1p_1+n_2p_2}{n_1+n_2}=\frac{x_1+x_2}{n_1+n_2}$$
@@ -654,7 +656,7 @@ n2 <- ds_40dc[ds_40dc$Pais=="Italy", "Poblacion"]
 p = (x1+x2)/(n1+n2)
 sp = sqrt(p*(1-p)*(1/n1+1/n2))
 z = (p1-p2)/sp
-pnorm(z, lower.tail=FALSE)
+pnorm(z, lower.tail=F)
 ```
 
 ```{r}
@@ -666,7 +668,7 @@ n2 <- ds_40dc[ds_40dc$Pais=="Portugal", "Poblacion"]
 p = (x1+x2)/(n1+n2)
 sp = sqrt(p*(1-p)*(1/n1+1/n2))
 z = (p1-p2)/sp
-pnorm(z, lower.tail=FALSE)
+pnorm(z, lower.tail=F)
 ```
 
 ```{r}
@@ -678,9 +680,10 @@ n2 <- ds_40dc[ds_40dc$Pais=="Germany", "Poblacion"]
 p = (x1+x2)/(n1+n2)
 sp = sqrt(p*(1-p)*(1/n1+1/n2))
 z = (p1-p2)/sp
-pnorm(z, lower.tail=FALSE)
+pnorm(z, lower.tail=F)
 ```
 
+De este primer análisis concluimos que en los 3 casos anteriores se encuentra evidencia suficiente para rechazar la hipótesis nula y por tanto, las proporciones de contagios en España con respecto a cada uno de los países elegidos es distinta.
 
 ### Contraste ANOVA entre continentes
 
@@ -688,9 +691,13 @@ pnorm(z, lower.tail=FALSE)
 proporciones <- ds_40dc$CasosDia40DC/ds_40dc$Poblacion
 continentes <- ds_40dc$Continent
 
+par(mar = c(5,9,2,1))
 boxplot(proporciones ~ continentes, 
         col = c("yellow", "blue", "grey","green", "pink", "orange"), 
-        ylab = "Proporción de población contagiada")
+        ylab = "", xlab="",
+        horizontal = T,
+        las=2, cex.axis=0.8)
+title(xlab="Proporción de población contagiada", line=3.5)
 
 anova = aov(lm(proporciones ~ continentes))
 summary(anova)
@@ -729,7 +736,7 @@ ggplot(as.data.frame(cbind(tests,contagiados)),aes(x=tests, y=contagiados)) +
 ### Correlación entre variación de indice y numero de casos-O-fallecidos.
 
 ```{r}
-#cor(x, y, method = c("pearson", "kendall", "spearman"))
+#cor(x, y, method = "spearman")
 ```
 
 ## Regresiones
