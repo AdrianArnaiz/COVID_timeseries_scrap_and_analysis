@@ -14,34 +14,38 @@ Actualmente nos encontramos ante un suceso histórico, una pandemia a nivel mund
 
 * Contrastes hipótesis:
   * Contraste proporciones Esp-Ita, Esp-Port, Esp-Ale
-  * Contraste anova entre continentes
+  * Contraste ANOVA entre continentes
 * Correlaciones:
   * Correlación entre proporción de tests y proporción de contagiados.
-  * Correlación entre variación de indice y numero de casos-O-fallecidos.
+  * Correlación entre variación de indice y numero de casos. Esp,Ita,Por,US.
 * Regresión:
   * Time Series Forecasting: ARIMA
   * Proporción a x días ~ densidad + %gente mayor  + etc
 
 ## Estructura del proyecto
-En la carpeta principal nos encontramos con el archivo ".travis.yml" el cual contiene la configuración requerida por Travis-CI. Además, estructuramos el resto de ficheros en los siguientes tres directorios:  
+En la carpeta principal nos encontramos con el archivo `.travis.yml` el cual contiene la configuración requerida por Travis-CI. Además, estructuramos el resto de ficheros en los siguientes tres directorios:  
 
 * **src/**: Contiene los ficheros con el código de scraping, el .log generado y los requerimientos para Travis CI:
-    * Scraping_covid19.py: scraping diario, generación de los csv y del archivo .log (parado el 28/30/2020)
-    * log_covid.log: generado por Scraping_covid19.py, es la información recogida de todos los commits de la ejecución automática
-    * requirements.txt: archivo con los requerimientos necesarios para que Travis CI ejecute correctamente el archivo .py
-    * scrap_population.py: scraping puntual de la población mundial en 2020
+    * `Scraping_covid19.py`: scraping diario, generación de los csv y del archivo .log (parado el 28/30/2020)
+    * `log_covid.log`: generado por Scraping_covid19.py, es la información recogida de todos los commits de la ejecución automática
+    * `requirements.txt`: archivo con los requerimientos necesarios para que Travis CI ejecute correctamente el archivo .py
+    * `scrap_population.py`: scraping puntual de la población mundial en 2020
     
 * **doc/**: Contiene la documentación de la Práctica 1 y la Práctica 2, cada una en su correspondiente directorio:
    * **PRA1-Scraping/**: Contiene las respuestas a las preguntas propuestas para la práctica 1, con la tabla de contribuciones en formato RMarkDown y PDF, así como los ficheros necesarios para generar dicho informe.  
    * **PRA2-Analysis/**: Contiene las respuestas a las preguntas propuestas para la práctica 2, todo el código y el procedimiento usado tanto para la limpieza de datos como para su análisis, la tabla de contribuciones en formato RMarkDown y PDF, así como los ficheros necesarios para generar el informe.
 
 * **csv/**: Contiene los ficheros csv generados del scrapping, los descargados y el archivo final obtenido de la limpieza de datos necesario para el posterior análisis.
+    * **Investing/**: ficheros csv descargados de la web Investing con datos de índices bursátiles de algunos países
+        * `Italy_IT40.csv`
+        * `Portugal_PSI20.csv`
+        * `Spain_IBEX35.csv`
+        * `US_SPX500.csv`
     * **WorldBankData/**: ficheros csv descargados de la web de WorldBankData con datos poblacionales de cada país
     * **covid_19_daily/**: ficheros csv con las actualizaciones automáticas diarias de la situación del COVID19 por país.
-    * **covid_19_series/**: ficheros csv de generados y actualizados a partir de Scraping_covid19.py
-    * **Investing/**: ficheros csv descargados de la web Investing con datos de índices bursátiles de algunos países
-    * world_population_2020.csv: archivo con la población mundial y densidad en 2020 de cada país.
-    * country_40dc_metadata.csv: **archivo final** tras la limpieza de datos de WorldBankData y world_population_2020.csv
+    * **covid_19_series/**: ficheros csv de generados y actualizados a partir de `Scraping_covid19.py`.
+    * `world_population_2020.csv`: archivo con la población mundial y densidad en 2020 de cada país.
+    * `country_40dc_metadata.csv`: **archivo final** tras la concatenación y limpieza de datos.
 
 *************
 ## Bibliografía 
