@@ -1,6 +1,6 @@
 # Dataset final
  
-Directorio donde guardamos todos los datasets resultados del scrapping. Sin embargo, nosotros tratamos las tablas resultanes de cada scrapping para hacer un dataset final alojado en el directorio `./covid_19_series`. 
+Directorio donde guardamos todos los datasets resultados del scrapping, descarga directa de "WorldBankData" e "Investing" y el dataset final resultante de la limpieza de datos. 
 
 ## DOI
 
@@ -11,5 +11,17 @@ Este dataset está alojado en *Zenodo*. Sin emabargo, la particularidad de este 
 ## Descripción
 La descripción individual del dataset se encontrará en cada directorio
 
-* **daily**: un csv por cada scraping realizado que contendrá la tabla de datos de worldometers (paises x dato) (raw data).
-* **series`**: un csv por dato a analizar su variabilidad en el tiempo por países (paises x fecha) (processed data).
+* **WorldBankData/**: ficheros csv descargados de la web de WorldBankData con datos poblacionales de cada país.
+  * `Metadata_Country.csv`
+  * `Metadata_Indicator_API_SP.POP.65UP.TO.ZS_DS2_en_csv_v2_1121570.csv`
+  * `UP65_Percentage.csv`
+  
+* **covid_19_daily/**: un csv por cada scraping realizado que contendrá la tabla de datos de worldometers (paises x dato) (raw data).
+
+* **covid_19_series/**: un csv por dato a analizar su variabilidad en el tiempo por países (paises x fecha) (processed data).
+
+* **Investing/**: ficheros csv descargados de la web Investing con datos de índices bursátiles de algunos países.
+
+* `world_population_2020.csv`: archivo con la población mundial y densidad de dicha población en 2020 de cada país.
+
+* `country_40dc_metadata.csv`: **archivo final** tras la unión y limpieza de datos.
