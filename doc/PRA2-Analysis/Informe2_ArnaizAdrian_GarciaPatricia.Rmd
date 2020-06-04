@@ -694,7 +694,7 @@ De este primer análisis concluimos que en los 3 casos anteriores se encuentra e
 proporciones <- ds_40dc$CasosDia40DC/ds_40dc$Poblacion
 continentes <- ds_40dc$Continent
 
-par(mar = c(5,9,2,1))
+par(mar = c(5,9.2,2,0.5))
 boxplot(proporciones ~ continentes, 
         col = c("yellow", "blue", "grey","green", "pink", "orange"), 
         ylab = "", xlab="",
@@ -736,10 +736,22 @@ ggplot(as.data.frame(cbind(tests,contagiados)),aes(x=tests, y=contagiados)) +
   geom_point()
 ```
 
-### Correlación entre variación de indice y numero de casos-O-fallecidos.
+### Correlación entre variación de indice y numero de casos.
 
 ```{r}
-#cor(x, y, method = "spearman")
+# ESPAÑA
+```
+
+```{r}
+# ITALIA
+```
+
+```{r}
+# PORTUGAL
+```
+
+```{r}
+# EEUU
 ```
 
 \newpage
