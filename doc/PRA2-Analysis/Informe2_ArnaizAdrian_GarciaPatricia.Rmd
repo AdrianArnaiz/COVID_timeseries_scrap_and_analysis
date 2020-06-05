@@ -60,9 +60,9 @@ Se quiere realizar contrastes de hipótesis sobre la diferencia de afectación e
 
   * Por otro lado, **para hacer un contraste de hipótesis se comparan distribuciones**. Si comparamos un dato de un dia concreto en el tiempo para dos países, son dos puntos individuales, que no tendrán varianza. Esto **lo resolvemos realizando contrastes de hipótesis sobre la proporción** [@contraste]. Consideramos el contagio o no como una variable que proviene de una distribución de Bernoulli con posibilidad de contagio $p$ y posibilidad de no contagiarse de $1-p$. Por ello compararemos las proporciones de contagio de dos países.
 
-  * Cuando tomamos el dato de proporción de contagiados en un país, (i.e., si queremos hacer el contraste que acabamos de explicar para analizar si la proporción de contagiados en España e Italia se puede considerar igual o es diferente), no podemos considerar la serie temporal como la muestra y hacer la media, por que no tendría sentido (no tiene sentido realizar la media de una serie temporal para ver la proporción de afectados). **Deberemos elegir un punto en el tiempo** para ver la proporción de contagios ese día. Es **muy importante que para hacer un análisis justo, no debemos elegir el mismo día para los dos países**. Deberemos elegir un dñia para cada país de tal modo que esa proporción muestre la misma estapa dentro de la pandemia, es decir, **debemos tener en cuenta cuando llegó el COVID a cada país**. Por ello utilizaremos la estrategia que utilizan diferentes analisa, como por ejempo el New York Times, se elegira el **Día 40 después de contabilizar 100 muertes**. 
+  * Cuando tomamos el dato de proporción de contagiados en un país, (i.e., si queremos hacer el contraste que acabamos de explicar para analizar si la proporción de contagiados en España e Italia se puede considerar igual o es diferente), no podemos considerar la serie temporal como la muestra y hacer la media, por que no tendría sentido (no tiene sentido realizar la media de una serie temporal para ver la proporción de afectados). **Deberemos elegir un punto en el tiempo** para ver la proporción de contagios ese día. Es **muy importante que para hacer un análisis justo, no debemos elegir el mismo día para los dos países**. Deberemos elegir un día para cada país de tal modo que esa proporción muestre la misma estapa dentro de la pandemia, es decir, **debemos tener en cuenta cuando llegó el COVID a cada país**. Por ello utilizaremos la estrategia que utilizan diferentes analistas, como por ejempo el New York Times, se elegirá el **Día 40 después de contabilizar 100 muertes**. 
   
-  * Para ver la afectación por continentes, consideraremos diferentes muestras de los diferentes continentes. Cada continente tendra $n$ proporciones, 1 de cada país que lo componga. Recordamos que la proporción de cada país ha sido obtenida como la proporción de contagiados el día 40 después de contabilizar 100 muertes. De este modo, **de cada continente tendremos una media de proporciones con una desviación, lo que nos permitirá relizar un análisis ANOVA**.
+  * Para ver la afectación por continentes, consideraremos diferentes muestras de los diferentes continentes. Cada continente tendrá $n$ proporciones, 1 de cada país que lo componga. Recordamos que la proporción de cada país ha sido obtenida como la proporción de contagiados el día 40 después de contabilizar 100 muertes. De este modo, **de cada continente tendremos una media de proporciones con una desviación, lo que nos permitirá relizar un análisis ANOVA**.
   
 ### Correlaciones
 
@@ -70,13 +70,13 @@ Como hemos comentado, una de las principales características que tienen las ser
 
 Los datos de series de tiempo generalmente dependen del tiempo. La correlación de Pearson, sin embargo, es apropiada para datos independientes. Este problema es similar a la llamada regresión espuria [@spurius]. Es probable que el coeficiente sea muy significativo, pero esto solo proviene de la tendencia temporal de los datos que afecta a ambas series.Es por ello que el uso del coeficiente de correlación de (Pearson o Spearman) probablemente dará resultados engañosos para la interpretación de la estructura de dependencia entre series temporales [@yule1926we]. Es decir, esto puede dar como resultado que la asociación aparente es una mera ilusión causada por la dependencia dentro de la serie.
 
-Para poder hacer una correlación objetivca entre ambas series se debería hacer una correlación cruzada entre diferentes lags, habiendo eliminado anteriormente. Entonces, para usar esta correlación, en lugar de suavizar la serie, en realidad es más común (porque es significativo) observar la dependencia entre los residuos [@agiakloglouspurious].
+Para poder hacer una correlación objetiva entre ambas series se debería hacer una correlación cruzada entre diferentes lags, habiendo eliminado anteriormente. Entonces, para usar esta correlación, en lugar de suavizar la serie, en realidad es más común (porque es significativo) observar la dependencia entre los residuos [@agiakloglouspurious].
 
 Como entendemos que esto está fuera del alcance actual, utilizaremos datos 'estáticos'. Es decir, datos de un instante de tiempo para los diferentes países, so series temporales. Utilizaremos la misma estrategia que venimos comentando, elegir la **proporción de casos del país el día 40 después de contabilizar 100 muertes**.
 
 Con ello, ya podremos realizar las siguientes correlaciones:
 
-  * Correlación entre proporción de contagiados (día 40 DC) y proporción de test realizados (dia 40 DC)
+  * Correlación entre proporción de contagiados (día 40 DC) y proporción de test realizados (día 40 DC)
   * Correlación entre proporción de contagiados (día 40 DC) y variación de los índices económicos.
   
 
@@ -96,10 +96,10 @@ Por lo tanto, y resumiendo, los análisis a realizar serán los siguientes:
 
 * Contrastes hipótesis:
   * Contraste proporciones Esp-Ita, Esp-Port, Esp-Ale
-  * Contraste anova entre continentes
+  * Contraste ANOVA entre continentes
 * Correlaciones:
   * Correlación entre proporción de tests y proporción de contagiados.
-  * Correlación entre variación de indice y numero de casos-O-fallecidos.
+  * Correlación entre variación de indice y numero de casos.
 * Regresión:
   * Time Series Forecasting: ARIMA
   * Proporción a x días ~ densidad + %gente mayor  + etc
@@ -128,7 +128,7 @@ Por otro lado, tendremos un **dataset para cada país la proporción de contagia
 Tendremos **dos datasets**, cada uno de ellos usado para un diferente tipo de análisis. 
 
 * Por un lado tendremos el cubo de series temporales de los datos.
-  * Lo utilizaremos para realizar Analisis de series temporales. Concretamente la regesión con ARIMA.
+  * Lo utilizaremos para realizar análisis de series temporales. Concretamente la regresión con ARIMA.
 * Por otro lado, tendremos una tabla final con datos de los países. Le llamaremos dataset de datos estáticos. 
   * Lo utilizaremos para los contrastes de hipótesis, correlaciones y regresión de la proporción de muertes a través de características sociodemográficas.
   * Lo explicamos más extensamente en la sección \ref{sec:analisis}. Contiene los datos de un país de manera estática, es decir: los datos de contagiados o fallecidos el día x después de las 100 muertes, datos de densidad, población, vejez de la población del país, nivel de ingresos, etc.
@@ -167,6 +167,15 @@ Ha sido realizado para esta segunda práctica:
 * Como resultado tenemos dos ficheros:
   * *csv/WorldBankData/Metadata_Country.csv*
   * *csv/WorldBankData/UP65_Percentage.csv*
+  
+### Índices bursátiles
+
+Ha sido realizado para esta segunda práctica:
+
+* Se han descargado directamente de la página web de Investing
+* Link a (Investing)[https://www.investing.com/]: https://www.investing.com/.
+* Se han descargado individualmente cada unos de los históricos de datos, buscando por el nombre de los índices de los países deaseados, desde 30/03/2020 hasta 28/05/2020 para que coincidan con el rango de tiempo scrapeado de la primera práctica. Para la obtención de los datos ha sido necesario crear una cuenta de carácter gratuito en la página web.
+* **Ficheros finales**: */csv/Investing/*
 
 \newpage
 
@@ -184,7 +193,7 @@ Como se ha comentado necesitamos dos datasets: El cubo de series temporales y el
 
 2. Leer csv de series temporales de **Worldometers** (*cubo* de la primera práctica): leeremos 3 csv del *cubo* relativos a las series temporales de contagios, fallecidos y tests. Sacamos el dato estático de cada país. Es decir, calculamos para cada país su día **40 despues de llegar la pandemia (100 muertes)** y obtenemos los datos de contagiados, fallecidos y tests ese día. Tendremos este $DF_2$.
 
-| País       | Contagiados dia 40 DC | Fallecidos dia 40 DC | tests/1M dia 40 DC |
+| País       | Contagiados día 40 DC | Fallecidos día 40 DC | tests/1M día 40 DC |
 |------------|----------------------|---------------------|-------------------|
 | España | n | n | n |
 | Italia | n | n | n |
@@ -294,7 +303,7 @@ head(total_muertes[,1:3])
 
 Como hemos comentado, queremos obtener los datos a día 40 transcurrido desde la notificación de 100 muertes por COVID en cada país, con el objetivo de comparar de forma objetiva diferentes países: misma fase de la pandemia. **Por ello para cada país buscaremos el día en el que se superan 100 muertes. Realmente, para cada país, obtendremos el índice de la columna donde se pasan por primera vez los 100 fallecidos**, con el objetivo de sumarle después los 40 días y obtener nuestro dato de **día 40 después del Covid** para cada país.
 
- * Existe un problema. Nuestro primer scrapping de la primera práctica fue el dia 30/03, y en ese día ya había varios países que superaban con creces los 100 fallecidos. Nos gustaría utilizar nuestros datos y no buscar nuevos (i.e. del Jhon Hopkins University) para realizar una práctica solucionando los problemas del propio dataset. **Por ello, debemos estimar hace cuantos días se llegó a las 100 muertes**. Se estima que las muertes se doblan cada dos días. Es decir $fallecidos=(dias/2)^2 \rightarrow dias=\sqrt{fallecidos/4}$. Como queremos estimar el día de las 100 muertes **aplicaremos un suavizado a la función** sacando el 4 de la raiz: $dias_{100}=\sqrt{fallecidos}/4$. Por ello, si vemos que en el primer día del scrapping tenemos ya mas de 100 muertes, calculamos el índice en negativo, para que después al sumarle 40 a esa fecha, nos de una columna de nuestro dataset y correspondiente al día 40 Después del Covid (No calculamos la proyección de casos para los que el primer dia tengan menos de 200, consideremos ese dia como el primero).
+ * Existe un problema. Nuestro primer scrapping de la primera práctica fue el dia 30/03, y en ese día ya había varios países que superaban con creces los 100 fallecidos. Nos gustaría utilizar nuestros datos y no buscar nuevos (i.e. del Jhon Hopkins University) para realizar una práctica solucionando los problemas del propio dataset. **Por ello, debemos estimar hace cuantos días se llegó a las 100 muertes**. Se estima que las muertes se doblan cada dos días. Es decir $fallecidos=(dias/2)^2 \rightarrow dias=\sqrt{fallecidos/4}$. Como queremos estimar el día de las 100 muertes **aplicaremos un suavizado a la función** sacando el 4 de la raiz: $dias_{100}=\sqrt{fallecidos}/4$. Por ello, si vemos que en el primer día del scrapping tenemos ya mas de 200 muertes, calculamos el índice en negativo, para que después al sumarle 40 a esa fecha, nos de una columna de nuestro dataset y correspondiente al día 40 Después del Covid (No calculamos la proyección de casos para los que el primer día tengan menos de 200, consideremos ese día como el primero).
  
  Estimación vs real en algunos ejemplos ("Día" se refiere al día de Marzo donde se superaron las 100 muertes):
  
@@ -394,7 +403,7 @@ head(day_40_dc)
 
 Ahora, tenemos que elegir los que han llegado a esa fase de la pandemia. Es decir, hay 3 casuísicas:
 
-* Que idcol sea menor de 58 (son las columnas que tenemos), lo que significa que el dia 40 después de las 100 muertes están en el dataset.
+* Que idcol sea menor de 58 (son las columnas que tenemos), lo que significa que el día 40 después de las 100 muertes están en el dataset.
 * Que idcol sea mayor que 58, con lo que quiere decir que el país no haya llegado al día 40 después de las 100 muertes.
 * Que idCol sea Nan, lo que significa que el país no ha llegado a las 100 muertes.
 
@@ -470,7 +479,7 @@ Merge final
 ```{r}
 country_covid_and_metadata <- merge(covid_country, country_incomes_elderly_continent, 
                                     by.x="Pais", by.y="Country.Name",all.x = TRUE)
-#Borramos el codigo del pais
+#Borramos el código del país
 country_covid_and_metadata <- country_covid_and_metadata %>% select(-Country.Code)
 head(country_covid_and_metadata)
 ```
@@ -629,7 +638,7 @@ ds_40dc <- read.csv(file="..//..//csv//country_40dc_metadata.csv")
 
 ### Contraste proporciones Esp-Ita, Esp-Port, Esp-Ale
 
-Con el objetivo de conocer si España ha tenido la misma proporción de fallecidos que Italia, Alemania o Portugal, realizaremos un contraste de hipótesis de España con cada uno de estos países. Para ello, realizaremos un proceso de **contraste sobre la diferencia de proporciones**. Cada país se considera como una muestra inbdependiente de tamaño $n$ (tamaño de la población). La muestra proviene de una distribución de Bernouilli de parametro p (posibilidad de contagiarse, que para nosotros es la proporción de contagiados). Queremos comparar los parámetros poblacionales $p1$ y $p2$ a partir de las muestras para decidir si podemos considerar estos iguales o no.
+Con el objetivo de conocer si España ha tenido la misma proporción de fallecidos que Italia, Alemania o Portugal, realizaremos un contraste de hipótesis de España con cada uno de estos países. Para ello, realizaremos un proceso de **contraste sobre la diferencia de proporciones**. Cada país se considera como una muestra independiente de tamaño $n$ (tamaño de la población). La muestra proviene de una distribución de Bernouilli de parámetro $p$ (posibilidad de contagiarse, que para nosotros es la proporción de contagiados). Queremos comparar los parámetros poblacionales $p1$ y $p2$ a partir de las muestras para decidir si podemos considerar estos iguales o no.
 
 $p1:$ Proporción de contagios en España
 $p2:$ Proporción de contagios en Italia/Portugal/Alemania
@@ -690,6 +699,39 @@ De este primer análisis concluimos que en los 3 casos anteriores se encuentra e
 
 ### Contraste ANOVA entre continentes
 
+En el caso anterior el podíamos comparar las proporciones de dos muestras de de dos poblaciones distintas. Sin embargo, en esta ocasión es necesario comparar más de 2 grupos. Para ello usaremos el modelo del Análisis de la Varianza (ANOVA), el cual nos permitirá abordar la comparación de casos de COVID en cada uno de los continentes.
+
+Estamos interesados en conocer si hay continentes más afectados por COVID que otros. 
+
+$H_{0}:$    Misma proporción en todos los continentes
+$H_{1}:$    Proporción diferente en algún continente
+
+Utilizaremos nivel de significancia $\alpha=0.05$
+
+Primero verificaremos la normalidad y homogeneidad de los datos.
+
+```{r}
+ds_40dc$casospob <- ds_40dc$CasosDia40DC/ds_40dc$Poblacion
+sa <- subset(ds_40dc, Continent == "South Asia")
+eap <- subset(ds_40dc, Continent == "East Asia & Pacific")
+saeap <- rbind(sa, eap)$casospob
+na <- ds_40dc[ds_40dc$Continent == "North America",]
+lac <- ds_40dc[ds_40dc$Continent == "Latin America & Caribbean",]
+nalac <- rbind(na,lac)$casospob
+mena <- ds_40dc[ds_40dc$Continent == "Middle East & North Africa", "casospob"]
+eca <- ds_40dc[ds_40dc$Continent == "Europe & Central Asia", "casospob"]
+
+# NORMALIDAD
+shapiro.test(mena)$p.value
+shapiro.test(nalac)$p.value
+shapiro.test(eca)$p.value
+shapiro.test(saeap)$p.value
+
+# IGUALDAD DE VARIANZAS
+bartlett.test(ds_40dc$casospob, ds_40dc$Continent)$p.value
+
+```
+
 ```{r}
 proporciones <- ds_40dc$CasosDia40DC/ds_40dc$Poblacion
 continentes <- ds_40dc$Continent
@@ -712,11 +754,31 @@ qf(0.05, l-1, n-l, lower.tail = F) #valor crítico
 
 El valor 3.831 se encuentra por encima del valor crítico 2.44 por lo que rechazamos hipótesis nula, no todos los continentes tienen la misma proporción de fallecidos.
 
+A partir de los residuos del modelo validaremos el modelo ANOVA anterior. Los supuestos que se deben cumplir son tres: independencia, homocedasticidad y normalidad.
+
+```{r}
+# INDEPENDENCIA
+plot(anova$residuals)
+
+# NORMALIDAD
+shapiro.test(anova$residuals)$p.value
+
+# IGUALDAD VARIANZAS
+bartlett.test(anova$residuals ~ continentes)$p.value
+```
+
+Al igual que en el caso de normalidad y homocedasticidad para los datos:
+
+* El test de Shapiro-Wilk indica que no tenemos evidencia suficiente para rechazar la hipótesis nula (normalidad de los residuos).
+* El test de Bartlett indica que tenemos evidencia suficiente para rechazar la hipótesis nula, por lo tanto consideramos que las varianzas no son iguales.
+
+Por lo tanto no es un modelo válido.
+
 ## Correlaciones
 
 ### Correlación entre proporcion de tests y proporcion de contagiados.
 
-Para ver la correlación entre la proporción de tests que se hacen y la porporción de contagiados aplicaremos la correlación se Spearman. Esto es debido a que este metodo mide la correlación en cuestión de si una magnitud crece con otra, pero no necesariamente de forma lineal (puede crecrer exponencialmente, logarítmica, etc). Pearson tiene el problema de que si una variable no crece de manera estrictamente lineal puede dar valores bajos.
+Para ver la correlación entre la proporción de tests que se hacen y la proporción de contagiados aplicaremos la correlación de Spearman. Esto es debido a que este método mide la correlación en cuestión de si una magnitud crece con otra, pero no necesariamente de forma lineal (puede crecer exponencialmente, logarítmica, etc). Pearson tiene el problema de que si una variable no crece de manera estrictamente lineal puede dar valores bajos.
 
 
 ```{r}
@@ -727,7 +789,7 @@ sptest$estimate
 sptest$p.value
 ```
 
-Contra más proporción de tests se realizan, más  proporción de casos detectamos. Hay una correlación de Spearman del 0.72 con un p-valor estadísticametne significativo.
+Contra más proporción de tests se realizan, más  proporción de casos detectamos. Hay una correlación de Spearman del 0.72 con un p-valor estadísticamente significativo.
 
 Mostramos un gráfico para visualizar los datos:
 
@@ -738,20 +800,77 @@ ggplot(as.data.frame(cbind(tests,contagiados)),aes(x=tests, y=contagiados)) +
 
 ### Correlación entre variación de indice y numero de casos.
 
-```{r}
+```{r, warning=FALSE}
 # ESPAÑA
+casos_spain <- as.data.frame(t(total_casos[total_casos$Country=="Spain",-1]))
+# eliminamos los días de los que no hay datos
+casos_spain_fit <- casos_spain[-c(2,4,6,7,8,11,12,13,14,17,18,24,25,30,31,32,38,39,45,46,51,52),] 
+ibex35 <-  read.csv(file="..//..//csv//Investing//Spain_IBEX35.csv", 
+                                header=T, fileEncoding="UTF-8-BOM")$Último
+ibex35_fit <- rev(as.numeric(gsub(",", ".", gsub("\\.", "", ibex35))))
+spaincor <- cor.test(ibex35_fit, casos_spain_fit, method = "spearman")
+spaincor$estimate
+spaincor$p.value
+
+p1 <- ggplot(as.data.frame(cbind(casos_spain_fit,ibex35_fit)),
+             aes(x=casos_spain_fit, y=ibex35_fit)) + 
+  geom_line() + labs(x="Spain", y="IBEX35")
 ```
 
-```{r}
+```{r, warning=FALSE}
 # ITALIA
+casos_italy <- as.data.frame(t(total_casos[total_casos$Country=="Italy",-1]))
+# eliminamos los días de los que no hay datos
+casos_italy_fit <- casos_italy[-c(2,4,6,7,8,11,12,13,14,17,18,24,25,30,31,32,38,39,45,46,51,52),] 
+it40 <-  read.csv(file="..//..//csv//Investing//Italy_IT40.csv", 
+                                header=T, fileEncoding="UTF-8-BOM")$Último
+it40_fit <- rev(as.numeric(gsub(",", ".", gsub("\\.", "", it40))))
+italycor <- cor.test(it40_fit, casos_italy_fit, method = "spearman")
+italycor$estimate
+italycor$p.value
+
+p2 <- ggplot(as.data.frame(cbind(casos_italy_fit,it40_fit)),
+             aes(x=casos_italy_fit, y=it40_fit)) + 
+  geom_line(color="Green") + labs(x="Italy", y="IT40")
 ```
 
-```{r}
+```{r, warning=FALSE}
 # PORTUGAL
+casos_portugal <- as.data.frame(t(total_casos[total_casos$Country=="Portugal",-1]))
+# eliminamos los días de los que no hay datos
+casos_portugal_fit <- casos_portugal[-c(2,4,6,7,8,11,12,13,14,17,18,24,25,30,31,32,38,39,45,46,51,52),] 
+psi20 <-  read.csv(file="..//..//csv//Investing//Portugal_PSI20.csv", 
+                                header=T, fileEncoding="UTF-8-BOM")$Último
+psi20_fit <- rev(as.numeric(gsub(",", ".", gsub("\\.", "", psi20))))
+portugalcor <- cor.test(psi20_fit, casos_portugal_fit, method = "spearman")
+portugalcor$estimate
+portugalcor$p.value
+
+p3 <- ggplot(as.data.frame(cbind(casos_portugal_fit,psi20_fit)),
+             aes(x=casos_portugal_fit, y=psi20_fit)) + 
+  geom_line(color="Blue")  + labs(x="Portugal", y="PSI20")
 ```
 
-```{r}
+```{r, warning=FALSE}
 # EEUU
+casos_us <- as.data.frame(t(total_casos[total_casos$Country=="USA",-1]))
+# eliminamos los días de los que no hay datos
+casos_us_fit <- casos_us[-c(2,4,6,7,8,11,12,13,14,17,18,24,25,30,31,32,38,39,45,46,51,52),] 
+spx500 <-  read.csv(file="..//..//csv//Investing//US_SPX500.csv", 
+                                header=T, fileEncoding="UTF-8-BOM")$Último
+spx500_fit <- rev(as.numeric(gsub(",", ".", gsub("\\.", "", spx500))))
+uscor <- cor.test(spx500_fit, casos_us_fit, method = "spearman")
+uscor$estimate
+uscor$p.value
+
+p4 <- ggplot(as.data.frame(cbind(casos_us_fit,spx500_fit)),
+             aes(x=casos_us_fit, y=spx500_fit)) + 
+  geom_line(color="Red")  + labs(x="United States", y="SPX500")
+```
+
+```{r, message=FALSE}
+library(gridExtra)
+grid.arrange(p1, p2, p3, p4, nrow=2)
 ```
 
 \newpage
@@ -933,17 +1052,16 @@ Nuestra conclusión es la siguiente: es posible que su modelo lineal no sea la m
 
 
 # Código fuente y dataset en Zenodo
-\textcolor{red}{ToDo}
-* El código fuente del scraping, actualización de datos y autoimatización mediante *Travis* se encuentra en [este enlace](https://github.com/AdrianArnaiz/scrap_uoc). Además hay archivos `readmemd` en los directorios que dan más información del proyecto.
 
-* El dataset (conjunto de 5 csv) se sube a *Zenodo*, sin embargo, cabe **destacar que debido al potencial añadido de la autoactualización con *Travis*, este dataset está en continua actualización diaria de los datos**. El dataset con mayor actualización se coresponderá al que tenemos en el repositorio.
+* El código fuente del scraping, actualización de datos y autoimatización mediante *Travis* se encuentra en ***[este enlace](https://github.com/AdrianArnaiz/scrap_uoc)***. Además hay archivos `readme.md` en los directorios que dan más información adiccional del proyecto.
+
+* El dataset (conjunto de 5 csv) se sube a *Zenodo*, sin embargo, cabe **destacar que debido al potencial añadido de la autoactualización con *Travis*, este dataset ha estado en continua actualización diaria de los datos hasta el 28/05/2020**. El dataset con mayor actualización se coresponderá al que tenemos en el repositorio.
   * **DOI de Zenodo**: 10.5281/zenodo.3748050.
-  * **Link a Zenodo**: https://zenodo.org/record/3748050#.XpD5w8gzZ9A
+  * **Link a Zenodo**: https://zenodo.org/record/3748050#.XpD5w8gzZ9A (última actualización 10/04/2020)
   
-\newpage
 
 # Tabla de contribuciones
-\textcolor{red}{ToDo}
+
 | Contribuciones       | Firma        |
 |----------------------|--------------|
 | Investigación previa | P.G.S, A.A.R |
@@ -951,5 +1069,3 @@ Nuestra conclusión es la siguiente: es posible que su modelo lineal no sea la m
 | Desarrollo de código | P.G.S, A.A.R |
 
 \newpage
-\textcolor{red}{ToDo}
-
