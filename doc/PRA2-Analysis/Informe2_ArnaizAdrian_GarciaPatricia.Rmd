@@ -873,6 +873,9 @@ library(gridExtra)
 grid.arrange(p1, p2, p3, p4, nrow=2)
 ```
 
+En este apartado hay que tener en consideración que los datos estudiados (Abril y Mayo) se corresponden con la fase de "recuperación económica" del COVID-19. 
+**España e Italia** tienen una evolución similar e indeterminada, correspondiente a la situación vivida durante la pandemia en cuanto a crecimiento de contagios. Por el otro lado vemos como **Portugal y EEUU** están teniendo una evolución claramente favorable en el tiempo, donde se ve que aunque sigue habiendo casos nuevos de COVID-19 sus economías se están recuperando. El crecimiento del índice americano se puede explicar que aunque tenga muchos más contagios, proviene de una economía muy potente. Por el otro lado Portugal, su ventaja ha sido tener un número muy bajo de contagios respecto a todos los países anteriores.
+
 \newpage
 
 ## Regresion
@@ -957,7 +960,7 @@ fore_pt
 \newpage
 
 
-### Regresión lineal: Proporción a 40 días ~ densidad + %gente mayor + etc
+### Regresión lineal: Proporción a 20 días ~ densidad + %gente mayor + etc
 
 Chequearemos la normalidad de nuestros datos.
 
@@ -1042,6 +1045,21 @@ Nuestra conclusión es la siguiente: es posible que su modelo lineal no sea la m
 
 # Conclusión
 
+Hacemos un pequeño repaso a los análisis realizados:
+
+- Contrastes
+Proporción de contagios: Encontramos evidencia suficiente para estimar que la proporción de contagios en España respecto a Italia, Portugal o Alemania es distintas.
+ANOVA entre continentes: El modelo no era válido debido a que no cumplia la condición de homocedasticidad.
+
+- Correlaciones
+Proporción de test y proporción de contagiados: se observa que a mayor proporción de contagiados, mayor proporción de teses.
+Variación índices bursátiles y número de casos: se obtenía una evolución indeterminada y similar para España e Italia, mientras que para EEUU y Portugal era notablemente favorable.
+
+- Regresiones
+Time Series Forecasting, ARIMA: Observabamos una crecida en Brasil, USA y Portugal, teniendo en cuenta una subida pronunciada en Portugal (aunque con muy bajas tasas de contagios), y una velocidad de aumento en Brasil mayor que en USA. Mientras tanto en Italia y España se predice una estabilización en ambas.
+Proporción a 20 días ~ densidad + %gente mayor + etc: no se ha sido capaz de abstraer la estructura y el porqué de la distribución con el modelo lineal.
+
+En definitiva, se ha visto como la afectación del COVID-19 por países y continentes ha sido muy diferente entre ellos, dependiendo de factores que han intentado ser explicados mediante indicadores sociales y demográficos. A pesar de ello no se ha encontrado una relación lineal, por ello los países más afectados tendrían que actuar en consecuencia en futuras pandemias, con mas precaución y medidas en función de sus características, ya que se desconoce con exactitud los factores que provoca  más afectación, y tampoco se puede predecir con exactitud el progreso del virus en un país.
 
 # Agradecimientos
 
