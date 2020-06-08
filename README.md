@@ -2,8 +2,7 @@
 
 **Último scraping automático - Fecha del dataset final**: 28 de Mayo de 2020
 
-Caso práctico de la recopilación de datos mediante técnicas de scrapping.
-
+Caso práctico de obtención y limpieza de datos sobre COVID-19, para posterior análisis observacional de la evolución del mismo en diversos aspectos a nivel mundial.
 
 ## Autores:
 * [**Patricia García Suarez**](mailto:pgarcia054@uoc.edu)
@@ -19,8 +18,8 @@ Actualmente nos encontramos ante un suceso histórico, una pandemia a nivel mund
   * Correlación entre proporción de tests y proporción de contagiados.
   * Correlación entre variación de indice y numero de casos. Esp,Ita,Por,US.
 * Regresión:
-  * Time Series Forecasting: ARIMA
-  * Proporción a x días ~ densidad + %gente mayor  + etc
+  * Time Series Forecasting: ARIMA, predicción de contagios en los siguientes 20 días a 40DC
+  * Proporción a 40 días ~ densidad + %gente mayor  + etc
 
 ## Estructura del proyecto
 En la carpeta principal nos encontramos con el archivo `.travis.yml` el cual contiene la configuración requerida por Travis-CI. Además, estructuramos el resto de ficheros en los siguientes tres directorios:  
