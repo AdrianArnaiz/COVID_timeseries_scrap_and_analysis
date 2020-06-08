@@ -1045,19 +1045,18 @@ Nuestra conclusión es la siguiente: es posible que su modelo lineal no sea la m
 
 # Agradecimientos
 
-\textcolor{red}{Todo}
-* Principalmente, agradecer a la asociación *Worldometers* [@worldo], asociación de estadísticas mundiales en tiempo real, por tener los datos actualizados de manera tan rápida y en abierto. 
+* Principalmente, agradecer a la asociación *Worldometers* [@worldo_cor], asociación de estadísticas mundiales en tiempo real, por tener los datos actualizados de manera tan rápida y en abierto. 
 * Después, tanto a los estudios de la *Johns Hopkins University* [@jhu], como a la asociación *Our world in Data* de la *Oxford University* [@roser2020coronavirus], por sus trabajos que nos han permitido descubrir fuentes da calidad.
 * Agradecer los recursos encontrados para realizar el scraping, tanto en [@lawson2015web] como en el módulo [@webscrapuoc], propio de la UOC.
 
 
 # Código fuente y dataset en Zenodo
 
-* El código fuente del scraping, actualización de datos y autoimatización mediante *Travis* se encuentra en ***[este enlace](https://github.com/AdrianArnaiz/scrap_uoc)***. Además hay archivos `readme.md` en los directorios que dan más información adiccional del proyecto.
+* El código fuente del scraping, actualización de datos y automatización mediante *Travis* se encuentra en ***[este enlace](https://github.com/AdrianArnaiz/scrap_uoc)***. Además hay archivos `readme.md` en los directorios que dan más información adiccional del proyecto.
 
-* El dataset (conjunto de 5 csv) se sube a *Zenodo*, sin embargo, cabe **destacar que debido al potencial añadido de la autoactualización con *Travis*, este dataset ha estado en continua actualización diaria de los datos hasta el 28/05/2020**. El dataset con mayor actualización se coresponderá al que tenemos en el repositorio.
+* El dataset (conjunto de 5 csv) se sube a *Zenodo*. Cabe **destacar que debido al potencial añadido de la autoactualización con *Travis*, este dataset ha estado en continua actualización diaria de los datos hasta el 28/05/2020**, por lo tanto, Zenodo se ha actualizado con est última versión. El dataset con mayor actualización se coresponderá al que tenemos en el repositorio.
   * **DOI de Zenodo**: 10.5281/zenodo.3748050.
-  * **Link a Zenodo**: https://zenodo.org/record/3748050#.XpD5w8gzZ9A (última actualización 10/04/2020)
+  * **Link a Zenodo**: https://zenodo.org/record/3748050#.XpD5w8gzZ9A
   
 
 # Tabla de contribuciones
