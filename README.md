@@ -1,4 +1,4 @@
-# Practica 2: Análisis de datos del Covid  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3748050.svg)](https://doi.org/10.5281/zenodo.3748050)
+# Practica 2: Análisis de datos del Covid  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3886437.svg)](https://doi.org/10.5281/zenodo.3886437)
 
 **Último scraping automático - Fecha del dataset final**: 28 de Mayo de 2020
 
