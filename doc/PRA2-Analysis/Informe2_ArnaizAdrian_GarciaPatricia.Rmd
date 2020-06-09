@@ -1073,9 +1073,17 @@ En definitiva, se ha visto como la afectación del COVID-19 por países y contin
 * El código fuente del scraping, actualización de datos y automatización mediante *Travis* se encuentra en ***[este enlace](https://github.com/AdrianArnaiz/scrap_uoc)***. Además hay archivos `readme.md` en los directorios que dan más información adiccional del proyecto.
 
 * El dataset (conjunto de 5 csv) se sube a *Zenodo*. Cabe **destacar que debido al potencial añadido de la autoactualización con *Travis*, este dataset ha estado en continua actualización diaria de los datos hasta el 28/05/2020**, por lo tanto, Zenodo se ha actualizado con est última versión. El dataset con mayor actualización se coresponderá al que tenemos en el repositorio.
-  * **DOI de Zenodo**: 10.5281/zenodo.3748050.
-  * **Link a Zenodo**: https://zenodo.org/record/3748050#.XpD5w8gzZ9A
-  
+  * **DOI de Zenodo**: 10.5281/zenodo.3886437
+  * **Link a Zenodo**: https://zenodo.org/record/3886437#.Xt9OmkUzaHs
+
+A continuación, se muestra una captura del la cantidad de descargas y visitas que han tenido los datasets en la plataforma Zenodo. Queda así plasmada la actual importancia y preocupación sobre el COVID-19, así como la necesidad de encontrar información para analizar al respecto.  
+
+```{r fig.width=3,fig.align='center',echo=FALSE}
+library(png)
+library(grid)
+img <- readPNG("img//zenodostats.png")
+grid.raster(img)
+```
 
 # Tabla de contribuciones
 
