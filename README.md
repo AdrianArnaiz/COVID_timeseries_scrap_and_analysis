@@ -40,7 +40,7 @@ En la carpeta principal nos encontramos con el archivo `.travis.yml` el cual con
         * `Portugal_PSI20.csv`
         * `Spain_IBEX35.csv`
         * `US_SPX500.csv`
-    * **WorldBankData/**: ficheros csv descargados de la web de WorldBankData con datos poblacionales de cada país
+    * **WorldBankData/**: ficheros csv descargados de la web de WorldBankData con datos sociodemográficos de los países.
     * **covid_19_daily/**: ficheros csv con las actualizaciones automáticas diarias de la situación del COVID19 por país.
     * **covid_19_series/**: ficheros csv de generados y actualizados a partir de `Scraping_covid19.py`.
     * `world_population_2020.csv`: archivo con la población mundial y densidad en 2020 de cada país.
